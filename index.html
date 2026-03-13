@@ -92,3 +92,48 @@ window.open(url,"_blank");
 
 </body>
 </html>
+<div id="cambio"></div>
+
+<script>
+fetch("https://api.exchangerate-api.com/v4/latest/USD")
+.then(res => res.json())
+.then(data => {
+let mxn = data.rates.MXN
+document.getElementById("cambio").innerHTML =
+"💵 USD → MXN: $" + mxn.toFixed(2)
+})
+</script>
+<h3>Agenda del día</h3>
+
+<table id="agenda" style="width:100%;color:white">
+
+</table>
+
+<script>
+
+let agenda = document.getElementById("agenda")
+
+for(let h=6; h<=23; h++){
+
+let m = ["00","30"]
+
+for(let i=0;i<m.length;i++){
+
+let hora = (h<10?"0"+h:h)+":"+m[i]
+
+let fila = `
+<tr>
+<td style="padding:8px;width:70px">${hora}</td>
+<td>
+<input placeholder="evento..." style="width:100%;padding:8px;border-radius:6px;border:none">
+</td>
+</tr>
+`
+
+agenda.innerHTML += fila
+
+}
+
+}
+
+</script>
