@@ -62,6 +62,10 @@ margin-top:20px;
 <table id="agenda"></table>
 
 <button onclick="guardarAgenda()">Guardar día</button>
+  <h3>Notas del día</h3>
+
+<textarea id="notas" placeholder="Escribe notas del día..."
+style="width:100%;max-width:500px;height:120px;border-radius:8px;padding:10px;"></textarea>
 
 <a href="agenda-mes.html">Vista mensual</a>
 <a href="index.html">← Volver</a>
@@ -100,7 +104,15 @@ agenda.innerHTML += fila
 
 
 function guardarAgenda(){
+let notas = document.getElementById("notas")
 
+function guardarNotas(){
+
+let hoy = new Date().toISOString().split("T")[0]
+
+localStorage.setItem("notas-"+hoy, notas.value)
+
+}
 let inputs = document.querySelectorAll("#agenda input")
 
 let datos = []
@@ -113,14 +125,24 @@ let hoy = new Date().toISOString().split("T")[0]
 
 localStorage.setItem("agenda-"+hoy, JSON.stringify(datos))
 
+guardarNotas()
 alert("Agenda guardada")
-
 }
 
 
 
 function cargarAgenda(){
+function cargarNotas(){
 
+let hoy = new Date().toISOString().split("T")[0]
+
+let n = localStorage.getItem("notas-"+hoy)
+
+if(n) notas.value = n
+
+}
+
+cargarNotas()
 let hoy = new Date().toISOString().split("T")[0]
 
 let datos = localStorage.getItem("agenda-"+hoy)
