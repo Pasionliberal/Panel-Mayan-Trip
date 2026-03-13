@@ -1,139 +1,75 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel Mayan Trip</title>
 
 <style>
+
 body{
-  font-family: Arial;
-  background:#0f172a;
-  color:white;
-  text-align:center;
-  padding:40px;
-}
-
-.panel{
-  max-width:420px;
-  margin:auto;
-  background:#1e293b;
-  padding:25px;
-  border-radius:12px;
-  box-shadow:0 0 10px rgba(0,0,0,0.5);
-}
-
-h2{
-  margin-bottom:20px;
-}
-
-input{
-  width:100%;
-  padding:14px;
-  margin:10px 0;
-  border-radius:8px;
-  border:none;
-  font-size:16px;
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+padding:40px;
 }
 
 button{
-  width:100%;
-  padding:16px;
-  margin-top:10px;
-  background:#3b82f6;
-  border:none;
-  border-radius:8px;
-  font-size:18px;
-  color:white;
+width:100%;
+padding:16px;
+margin:10px 0;
+background:#3b82f6;
+border:none;
+border-radius:8px;
+font-size:18px;
+color:white;
 }
 
-button:active{
-  background:#2563eb;
-}
 </style>
-
 </head>
 
 <body>
 
-<div class="panel">
-
 <h2>Panel Mayan Trip</h2>
 
-<input id="origen" placeholder="Origen">
+<div id="fecha"></div>
+<div id="cambio"></div>
 
-<input id="destino" placeholder="Destino">
+<br><br>
 
-<button onclick="ruta()">Ver ruta</button>
+<button onclick="location.href='agenda.html'">Agenda</button>
 
-</div>
+<button onclick="location.href='servicios.html'">Servicios</button>
+
+<button onclick="location.href='contabilidad-personal.html'">
+Contabilidad Personal
+</button>
+
+<button onclick="location.href='contabilidad-trabajo.html'">
+Contabilidad Trabajo
+</button>
 
 <script>
 
-function ruta(){
+let hoy = new Date()
 
-let origen=document.getElementById("origen").value;
+document.getElementById("fecha").innerHTML =
+hoy.toLocaleDateString("es-MX",{
+weekday:"long",
+year:"numeric",
+month:"long",
+day:"numeric"
+})
 
-let destino=document.getElementById("destino").value;
-
-if(!origen||!destino){
-alert("Escribe origen y destino");
-return;
-}
-
-let url="https://www.google.com/maps/dir/"
-+encodeURIComponent(origen)+"/"
-+encodeURIComponent(destino);
-
-window.open(url,"_blank");
-
-}
+fetch("https://api.exchangerate-api.com/v4/latest/USD")
+.then(r=>r.json())
+.then(data=>{
+document.getElementById("cambio").innerHTML =
+"USD → MXN: $" + data.rates.MXN.toFixed(2)
+})
 
 </script>
 
 </body>
 </html>
-<div id="cambio"></div>
-
-<script>
-fetch("https://api.exchangerate-api.com/v4/latest/USD")
-.then(res => res.json())
-.then(data => {
-let mxn = data.rates.MXN
-document.getElementById("cambio").innerHTML =
-"💵 USD → MXN: $" + mxn.toFixed(2)
-})
-</script>
-<h3>Agenda del día</h3>
-
-<table id="agenda" style="width:100%;color:white">
-
-</table>
-
-<script>
-
-let agenda = document.getElementById("agenda")
-
-for(let h=6; h<=23; h++){
-
-let m = ["00","30"]
-
-for(let i=0;i<m.length;i++){
-
-let hora = (h<10?"0"+h:h)+":"+m[i]
-
-let fila = `
-<tr>
-<td style="padding:8px;width:70px">${hora}</td>
-<td>
-<input placeholder="evento..." style="width:100%;padding:8px;border-radius:6px;border:none">
-</td>
-</tr>
-`
-
-agenda.innerHTML += fila
-
-}
-
-}
-
-</script>
