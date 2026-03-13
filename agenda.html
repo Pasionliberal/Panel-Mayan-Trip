@@ -57,7 +57,7 @@ Vista mensual
 <br>
 
 <table id="agenda"></table>
-  <button onclick="guardarAgenda()">Guardar día</button>
+<button onclick="guardarAgenda()">Guardar día</button>
 
 <br>
 
@@ -98,12 +98,8 @@ agenda.innerHTML += fila
 
 }
 
-</script>
-
-</body>
-</html>
-function guardarAgenda(){
-
+  function guardarAgenda(){
+  
 let inputs = document.querySelectorAll("#agenda input")
 
 let datos = []
@@ -139,3 +135,6 @@ if(datos[index]) i.value = datos[index]
 }
 
 cargarAgenda()
+  </script>
+</body>
+</html>
