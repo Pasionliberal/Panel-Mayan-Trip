@@ -1,3 +1,103 @@
-<h2>Agenda</h2>
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+button{
+padding:10px;
+margin:10px;
+border:none;
+border-radius:6px;
+background:#3b82f6;
+color:white;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+td{
+border-bottom:1px solid #444;
+padding:8px;
+}
+
+input{
+width:100%;
+padding:8px;
+border:none;
+border-radius:6px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h2>Agenda del día</h2>
+
+<div id="fecha"></div>
+
+<button onclick="location.href='agenda-mes.html'">
+Vista mensual
+</button>
+
+<br>
+
+<table id="agenda"></table>
+
+<br>
 
 <a href="index.html">← Volver</a>
+
+<script>
+
+let hoy = new Date()
+
+document.getElementById("fecha").innerHTML =
+hoy.toLocaleDateString("es-MX",{
+weekday:"long",
+year:"numeric",
+month:"long",
+day:"numeric"
+})
+
+let agenda = document.getElementById("agenda")
+
+for(let h=6; h<=23; h++){
+
+let m = ["00","30"]
+
+for(let i=0;i<m.length;i++){
+
+let hora = (h<10?"0"+h:h)+":"+m[i]
+
+let fila = `
+<tr>
+<td style="width:80px">${hora}</td>
+<td><input placeholder="evento..."></td>
+</tr>
+`
+
+agenda.innerHTML += fila
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
