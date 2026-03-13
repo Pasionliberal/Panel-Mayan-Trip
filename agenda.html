@@ -3,7 +3,6 @@
 
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>Agenda</title>
 
 <style>
@@ -35,6 +34,15 @@ border-radius:6px;
 border:none;
 }
 
+textarea{
+width:100%;
+max-width:500px;
+height:120px;
+border-radius:8px;
+padding:10px;
+margin-top:10px;
+}
+
 button{
 margin-top:20px;
 padding:12px 20px;
@@ -61,11 +69,11 @@ margin-top:20px;
 
 <table id="agenda"></table>
 
-<button onclick="guardarAgenda()">Guardar día</button>
-  <h3>Notas del día</h3>
+<button onclick="guardarTodo()">Guardar día</button>
 
-<textarea id="notas" placeholder="Escribe notas del día..."
-style="width:100%;max-width:500px;height:120px;border-radius:8px;padding:10px;"></textarea>
+<h3>Notas del día</h3>
+
+<textarea id="notas" placeholder="Escribe notas del día..."></textarea>
 
 <a href="agenda-mes.html">Vista mensual</a>
 <a href="index.html">← Volver</a>
@@ -74,6 +82,7 @@ style="width:100%;max-width:500px;height:120px;border-radius:8px;padding:10px;">
 <script>
 
 let agenda = document.getElementById("agenda")
+let notas = document.getElementById("notas")
 
 for(let h=6; h<=23; h++){
 
@@ -103,16 +112,8 @@ agenda.innerHTML += fila
 
 
 
-function guardarAgenda(){
-let notas = document.getElementById("notas")
+function guardarTodo(){
 
-function guardarNotas(){
-
-let hoy = new Date().toISOString().split("T")[0]
-
-localStorage.setItem("notas-"+hoy, notas.value)
-
-}
 let inputs = document.querySelectorAll("#agenda input")
 
 let datos = []
@@ -124,30 +125,21 @@ datos.push(i.value)
 let hoy = new Date().toISOString().split("T")[0]
 
 localStorage.setItem("agenda-"+hoy, JSON.stringify(datos))
+localStorage.setItem("notas-"+hoy, notas.value)
 
-guardarNotas()
 alert("Agenda guardada")
-}
-
-
-
-function cargarAgenda(){
-function cargarNotas(){
-
-let hoy = new Date().toISOString().split("T")[0]
-
-let n = localStorage.getItem("notas-"+hoy)
-
-if(n) notas.value = n
 
 }
 
-cargarNotas()
+
+
+function cargarTodo(){
+
 let hoy = new Date().toISOString().split("T")[0]
 
 let datos = localStorage.getItem("agenda-"+hoy)
 
-if(!datos) return
+if(datos){
 
 datos = JSON.parse(datos)
 
@@ -159,7 +151,13 @@ if(datos[index]) i.value = datos[index]
 
 }
 
-cargarAgenda()
+let n = localStorage.getItem("notas-"+hoy)
+
+if(n) notas.value = n
+
+}
+
+cargarTodo()
 
 </script>
 
