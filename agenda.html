@@ -57,6 +57,7 @@ Vista mensual
 <br>
 
 <table id="agenda"></table>
+  <button onclick="guardarAgenda()">Guardar día</button>
 
 <br>
 
@@ -101,3 +102,40 @@ agenda.innerHTML += fila
 
 </body>
 </html>
+function guardarAgenda(){
+
+let inputs = document.querySelectorAll("#agenda input")
+
+let datos = []
+
+inputs.forEach(i=>{
+datos.push(i.value)
+})
+
+let hoy = new Date().toISOString().split("T")[0]
+
+localStorage.setItem("agenda-"+hoy, JSON.stringify(datos))
+
+alert("Agenda guardada")
+
+}
+
+function cargarAgenda(){
+
+let hoy = new Date().toISOString().split("T")[0]
+
+let datos = localStorage.getItem("agenda-"+hoy)
+
+if(!datos) return
+
+datos = JSON.parse(datos)
+
+let inputs = document.querySelectorAll("#agenda input")
+
+inputs.forEach((i,index)=>{
+if(datos[index]) i.value = datos[index]
+})
+
+}
+
+cargarAgenda()
