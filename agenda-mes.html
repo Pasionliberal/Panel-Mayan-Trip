@@ -32,10 +32,22 @@ background:#1e293b;
 padding:12px;
 border-radius:6px;
 cursor:pointer;
+position:relative;
 }
 
 .dia:hover{
 background:#334155;
+}
+
+.punto{
+width:6px;
+height:6px;
+background:#22c55e;
+border-radius:50%;
+position:absolute;
+bottom:5px;
+left:50%;
+transform:translateX(-50%);
 }
 
 .encabezado{
@@ -77,7 +89,7 @@ color:#a78bfa;
 <div class="calendario" id="calendario"></div>
 
 <a href="agenda.html">← Volver a agenda</a>
-
+<button onclick="location.href='https://pasionliberal.github.io/Panel-Mayan-Trip/'">🏠 Inicio</button>
 
 <script>
 
@@ -88,6 +100,26 @@ let fecha=new Date()
 
 const diasSemana=["Lu","Ma","Mi","Ju","Vi","Sa","Do"]
 
+function keyFecha(año,mes,dia){
+mes=String(mes+1).padStart(2,"0")
+dia=String(dia).padStart(2,"0")
+return `${año}-${mes}-${dia}`
+}
+
+function tieneActividad(key){
+
+let agenda=JSON.parse(localStorage.getItem("agenda-"+key)||"[]")
+let tareas=JSON.parse(localStorage.getItem("tareas-"+key)||"[]")
+let notas=localStorage.getItem("notas-"+key)||""
+
+let evento=agenda.some(e=>e && e.trim()!=="")
+let tarea=tareas.some(t=>t.texto && t.texto.trim()!=="")
+let nota=notas.trim()!==""
+
+return evento || tarea || nota
+
+}
+
 function generarCalendario(){
 
 calendario.innerHTML=""
@@ -96,7 +128,6 @@ let año=fecha.getFullYear()
 let mes=fecha.getMonth()
 
 let primerDia=new Date(año,mes,1).getDay()
-
 if(primerDia===0) primerDia=7
 
 let diasMes=new Date(año,mes+1,0).getDate()
@@ -116,12 +147,20 @@ calendario.innerHTML+=`<div></div>`
 
 for(let d=1;d<=diasMes;d++){
 
+let key=keyFecha(año,mes,d)
+
 let diaElemento=document.createElement("div")
 diaElemento.className="dia"
 diaElemento.innerHTML=d
 
+if(tieneActividad(key)){
+let punto=document.createElement("div")
+punto.className="punto"
+diaElemento.appendChild(punto)
+}
+
 diaElemento.onclick=()=>{
-abrirAgenda(d)
+window.location.href=`agenda.html?fecha=${key}`
 }
 
 calendario.appendChild(diaElemento)
@@ -130,23 +169,9 @@ calendario.appendChild(diaElemento)
 
 }
 
-function abrirAgenda(dia){
-
-let año=fecha.getFullYear()
-let mes=String(fecha.getMonth()+1).padStart(2,"0")
-let d=String(dia).padStart(2,"0")
-
-let fechaSeleccionada=`${año}-${mes}-${d}`
-
-window.location.href=`agenda.html?fecha=${fechaSeleccionada}`
-
-}
-
 function cambiarMes(valor){
-
 fecha.setMonth(fecha.getMonth()+valor)
 generarCalendario()
-
 }
 
 generarCalendario()
