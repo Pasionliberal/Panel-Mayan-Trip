@@ -65,11 +65,19 @@ align-items:center;
 gap:10px;
 max-width:500px;
 margin:auto;
-margin-top:6px;
+margin-top:10px;
+}
+
+.tarea input[type="checkbox"]{
+width:20px;
+height:20px;
 }
 
 .tarea input[type="text"]{
 flex:1;
+padding:8px;
+border-radius:6px;
+border:none;
 }
 
 </style>
@@ -138,12 +146,12 @@ agenda.innerHTML += fila
 
 function agregarTarea(){
 
-let div = document.createElement("div")
+let div=document.createElement("div")
 div.className="tarea"
 
 div.innerHTML=`
 <input type="checkbox">
-<input type="text" placeholder="tarea...">
+<input type="text" placeholder="Escribe tarea...">
 `
 
 tareas.appendChild(div)
@@ -154,18 +162,18 @@ tareas.appendChild(div)
 
 function guardarTodo(){
 
-let inputs = document.querySelectorAll("#agenda input")
+let inputs=document.querySelectorAll("#agenda input")
 
-let datos = []
+let datos=[]
 
 inputs.forEach(i=>{
 datos.push(i.value)
 })
 
-let hoy = new Date().toISOString().split("T")[0]
+let hoy=new Date().toISOString().split("T")[0]
 
-localStorage.setItem("agenda-"+hoy, JSON.stringify(datos))
-localStorage.setItem("notas-"+hoy, notas.value)
+localStorage.setItem("agenda-"+hoy,JSON.stringify(datos))
+localStorage.setItem("notas-"+hoy,notas.value)
 
 
 
@@ -190,27 +198,27 @@ alert("Agenda guardada")
 
 function cargarTodo(){
 
-let hoy = new Date().toISOString().split("T")[0]
+let hoy=new Date().toISOString().split("T")[0]
 
-let datos = localStorage.getItem("agenda-"+hoy)
+let datos=localStorage.getItem("agenda-"+hoy)
 
 if(datos){
 
-datos = JSON.parse(datos)
+datos=JSON.parse(datos)
 
-let inputs = document.querySelectorAll("#agenda input")
+let inputs=document.querySelectorAll("#agenda input")
 
 inputs.forEach((i,index)=>{
-if(datos[index]) i.value = datos[index]
+if(datos[index]) i.value=datos[index]
 })
 
 }
 
 
 
-let n = localStorage.getItem("notas-"+hoy)
+let n=localStorage.getItem("notas-"+hoy)
 
-if(n) notas.value = n
+if(n) notas.value=n
 
 
 
