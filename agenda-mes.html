@@ -15,10 +15,6 @@ text-align:center;
 padding:20px;
 }
 
-h2{
-margin-bottom:10px;
-}
-
 .calendario{
 max-width:520px;
 margin:auto;
@@ -32,23 +28,15 @@ background:#1e293b;
 padding:12px;
 border-radius:6px;
 cursor:pointer;
-position:relative;
 }
 
 .dia:hover{
 background:#334155;
 }
 
-.punto{
-width:6px;
-height:6px;
-background:#22c55e;
-border-radius:50%;
-position:absolute;
-bottom:5px;
-left:50%;
-transform:translateX(-50%);
-}
+.verde{ background:#166534; }
+.amarillo{ background:#854d0e; }
+.rojo{ background:#7f1d1d; }
 
 .encabezado{
 font-weight:bold;
@@ -76,20 +64,22 @@ color:#a78bfa;
 </style>
 </head>
 
-
 <body>
 
 <h2 id="mesTitulo"></h2>
 
 <div class="navegacion">
 <button onclick="cambiarMes(-1)">◀</button>
+<button onclick="irHoy()">Hoy</button>
 <button onclick="cambiarMes(1)">▶</button>
 </div>
 
 <div class="calendario" id="calendario"></div>
 
 <a href="agenda.html">← Volver a agenda</a>
-<button onclick="location.href='https://pasionliberal.github.io/Panel-Mayan-Trip/'">🏠 Inicio</button>
+<button onclick="location.href='https://pasionliberal.github.io/Panel-Mayan-Trip/'">
+🏠 Inicio
+</button>
 
 <script>
 
@@ -101,22 +91,27 @@ let fecha=new Date()
 const diasSemana=["Lu","Ma","Mi","Ju","Vi","Sa","Do"]
 
 function keyFecha(año,mes,dia){
+
 mes=String(mes+1).padStart(2,"0")
 dia=String(dia).padStart(2,"0")
+
 return `${año}-${mes}-${dia}`
+
 }
 
-function tieneActividad(key){
+function estadoDia(key){
 
-let agenda=JSON.parse(localStorage.getItem("agenda-"+key)||"[]")
 let tareas=JSON.parse(localStorage.getItem("tareas-"+key)||"[]")
-let notas=localStorage.getItem("notas-"+key)||""
 
-let evento=agenda.some(e=>e && e.trim()!=="")
-let tarea=tareas.some(t=>t.texto && t.texto.trim()!=="")
-let nota=notas.trim()!==""
+if(tareas.length===0) return null
 
-return evento || tarea || nota
+let completadas=tareas.filter(t=>t.check).length
+
+if(completadas===0) return "rojo"
+
+if(completadas===tareas.length) return "verde"
+
+return "amarillo"
 
 }
 
@@ -128,6 +123,7 @@ let año=fecha.getFullYear()
 let mes=fecha.getMonth()
 
 let primerDia=new Date(año,mes,1).getDay()
+
 if(primerDia===0) primerDia=7
 
 let diasMes=new Date(año,mes+1,0).getDate()
@@ -153,10 +149,10 @@ let diaElemento=document.createElement("div")
 diaElemento.className="dia"
 diaElemento.innerHTML=d
 
-if(tieneActividad(key)){
-let punto=document.createElement("div")
-punto.className="punto"
-diaElemento.appendChild(punto)
+let estado=estadoDia(key)
+
+if(estado){
+diaElemento.classList.add(estado)
 }
 
 diaElemento.onclick=()=>{
@@ -170,8 +166,17 @@ calendario.appendChild(diaElemento)
 }
 
 function cambiarMes(valor){
+
 fecha.setMonth(fecha.getMonth()+valor)
 generarCalendario()
+
+}
+
+function irHoy(){
+
+fecha=new Date()
+generarCalendario()
+
 }
 
 generarCalendario()
