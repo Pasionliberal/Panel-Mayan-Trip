@@ -14,6 +14,10 @@ text-align:center;
 padding:20px;
 }
 
+h2{
+margin-bottom:10px;
+}
+
 table{
 width:100%;
 max-width:520px;
@@ -43,7 +47,7 @@ margin-top:10px;
 
 button{
 margin-top:16px;
-padding:12px 20px;
+padding:10px 18px;
 border:none;
 border-radius:8px;
 background:#3b82f6;
@@ -83,12 +87,24 @@ border:none;
 background:#166534;
 }
 
+.navegacion{
+margin-bottom:15px;
+}
+
 </style>
 </head>
 
 <body>
 
-<h2>Agenda del día</h2>
+<h2>Agenda</h2>
+
+<div id="fecha"></div>
+
+<div class="navegacion">
+<button onclick="cambiarDia(-1)">◀ Ayer</button>
+<button onclick="cambiarDia(0)">Hoy</button>
+<button onclick="cambiarDia(1)">Mañana ▶</button>
+</div>
 
 <table id="agenda"></table>
 
@@ -112,16 +128,41 @@ const notas=document.getElementById("notas")
 const tareas=document.getElementById("tareas")
 const btnGuardar=document.getElementById("guardarBtn")
 const btnNuevaTarea=document.getElementById("btnNuevaTarea")
+const fechaTexto=document.getElementById("fecha")
 
-function keyHoy(){
-const hoy=new Date()
-const y=hoy.getFullYear()
-const m=String(hoy.getMonth()+1).padStart(2,'0')
-const d=String(hoy.getDate()).padStart(2,'0')
-return y+"-"+m+"-"+d
+let fechaActual=new Date()
+
+function formatearFecha(fecha){
+
+return fecha.toLocaleDateString("es-MX",{
+weekday:"long",
+year:"numeric",
+month:"long",
+day:"numeric"
+})
+
 }
 
-/* agenda por horas */
+function keyFecha(fecha){
+
+const y=fecha.getFullYear()
+const m=String(fecha.getMonth()+1).padStart(2,'0')
+const d=String(fecha.getDate()).padStart(2,'0')
+
+return y+"-"+m+"-"+d
+
+}
+
+function cambiarDia(valor){
+
+fechaActual.setDate(fechaActual.getDate()+valor)
+cargarTodo()
+
+}
+
+function crearAgenda(){
+
+agenda.innerHTML=""
 
 for(let h=6;h<=23;h++){
 
@@ -140,9 +181,10 @@ agenda.innerHTML+=`
 <td><input style="width:100%" placeholder="evento..."></td>
 </tr>
 `
+
 }
 
-/* nueva tarea */
+}
 
 btnNuevaTarea.onclick=()=>{
 
@@ -168,50 +210,55 @@ tareas.appendChild(div)
 
 }
 
-/* guardar */
-
 btnGuardar.onclick=()=>{
 
-const hoy=keyHoy()
+const key=keyFecha(fechaActual)
 
 const eventos=[]
 document.querySelectorAll("#agenda input").forEach(i=>{
 eventos.push(i.value)
 })
 
-localStorage.setItem("agenda-"+hoy,JSON.stringify(eventos))
-localStorage.setItem("notas-"+hoy,notas.value)
+localStorage.setItem("agenda-"+key,JSON.stringify(eventos))
+localStorage.setItem("notas-"+key,notas.value)
 
 const lista=[]
 
 document.querySelectorAll(".tarea").forEach(t=>{
+
 const check=t.querySelector("input[type=checkbox]").checked
 const texto=t.querySelector("input[type=text]").value
+
 lista.push({check,texto})
+
 })
 
-localStorage.setItem("tareas-"+hoy,JSON.stringify(lista))
+localStorage.setItem("tareas-"+key,JSON.stringify(lista))
 
 alert("Guardado")
 
 }
 
-/* cargar */
+function cargarTodo(){
 
-function cargar(){
+crearAgenda()
 
-const hoy=keyHoy()
+fechaTexto.innerHTML=formatearFecha(fechaActual)
 
-const eventos=JSON.parse(localStorage.getItem("agenda-"+hoy)||"[]")
+const key=keyFecha(fechaActual)
+
+const eventos=JSON.parse(localStorage.getItem("agenda-"+key)||"[]")
 
 document.querySelectorAll("#agenda input").forEach((i,idx)=>{
 if(eventos[idx]) i.value=eventos[idx]
 })
 
-const n=localStorage.getItem("notas-"+hoy)
-if(n) notas.value=n
+const n=localStorage.getItem("notas-"+key)
+notas.value=n||""
 
-const lista=JSON.parse(localStorage.getItem("tareas-"+hoy)||"[]")
+tareas.innerHTML=""
+
+const lista=JSON.parse(localStorage.getItem("tareas-"+key)||"[]")
 
 lista.forEach(t=>{
 
@@ -243,7 +290,7 @@ tareas.appendChild(div)
 
 }
 
-cargar()
+cargarTodo()
 
 </script>
 
