@@ -59,6 +59,19 @@ display:block;
 margin-top:20px;
 }
 
+.tarea{
+display:flex;
+align-items:center;
+gap:10px;
+max-width:500px;
+margin:auto;
+margin-top:6px;
+}
+
+.tarea input[type="text"]{
+flex:1;
+}
+
 </style>
 </head>
 
@@ -75,6 +88,14 @@ margin-top:20px;
 
 <textarea id="notas" placeholder="Escribe notas del día..."></textarea>
 
+
+<h3>Tareas del día</h3>
+
+<div id="tareas"></div>
+
+<button onclick="agregarTarea()">+ Nueva tarea</button>
+
+
 <a href="agenda-mes.html">Vista mensual</a>
 <a href="index.html">← Volver</a>
 
@@ -83,6 +104,9 @@ margin-top:20px;
 
 let agenda = document.getElementById("agenda")
 let notas = document.getElementById("notas")
+let tareas = document.getElementById("tareas")
+
+
 
 for(let h=6; h<=23; h++){
 
@@ -112,6 +136,22 @@ agenda.innerHTML += fila
 
 
 
+function agregarTarea(){
+
+let div = document.createElement("div")
+div.className="tarea"
+
+div.innerHTML=`
+<input type="checkbox">
+<input type="text" placeholder="tarea...">
+`
+
+tareas.appendChild(div)
+
+}
+
+
+
 function guardarTodo(){
 
 let inputs = document.querySelectorAll("#agenda input")
@@ -126,6 +166,21 @@ let hoy = new Date().toISOString().split("T")[0]
 
 localStorage.setItem("agenda-"+hoy, JSON.stringify(datos))
 localStorage.setItem("notas-"+hoy, notas.value)
+
+
+
+let listaTareas=[]
+
+document.querySelectorAll(".tarea").forEach(t=>{
+
+let check=t.querySelector("input[type=checkbox]").checked
+let texto=t.querySelector("input[type=text]").value
+
+listaTareas.push({check,texto})
+
+})
+
+localStorage.setItem("tareas-"+hoy,JSON.stringify(listaTareas))
 
 alert("Agenda guardada")
 
@@ -151,9 +206,35 @@ if(datos[index]) i.value = datos[index]
 
 }
 
+
+
 let n = localStorage.getItem("notas-"+hoy)
 
 if(n) notas.value = n
+
+
+
+let listaTareas=localStorage.getItem("tareas-"+hoy)
+
+if(listaTareas){
+
+listaTareas=JSON.parse(listaTareas)
+
+listaTareas.forEach(t=>{
+
+let div=document.createElement("div")
+div.className="tarea"
+
+div.innerHTML=`
+<input type="checkbox" ${t.check?"checked":""}>
+<input type="text" value="${t.texto}">
+`
+
+tareas.appendChild(div)
+
+})
+
+}
 
 }
 
