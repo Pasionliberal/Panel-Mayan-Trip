@@ -62,20 +62,21 @@ margin-top:20px;
 .tarea{
 display:flex;
 align-items:center;
-gap:10px;
 max-width:500px;
 margin:auto;
 margin-top:10px;
+gap:10px;
 }
 
-.tarea input[type="checkbox"]{
-width:20px;
-height:20px;
+.check{
+width:22px;
+height:22px;
 }
 
-.tarea input[type="text"]{
+.texto{
 flex:1;
-padding:8px;
+width:100%;
+padding:10px;
 border-radius:6px;
 border:none;
 }
@@ -96,13 +97,11 @@ border:none;
 
 <textarea id="notas" placeholder="Escribe notas del día..."></textarea>
 
-
 <h3>Tareas del día</h3>
 
 <div id="tareas"></div>
 
 <button onclick="agregarTarea()">+ Nueva tarea</button>
-
 
 <a href="agenda-mes.html">Vista mensual</a>
 <a href="index.html">← Volver</a>
@@ -120,25 +119,21 @@ for(let h=6; h<=23; h++){
 
 let hora = (h<10?"0"+h:h)+":00"
 
-let fila = `
+agenda.innerHTML += `
 <tr>
 <td style="width:80px">${hora}</td>
 <td><input placeholder="evento..."></td>
 </tr>
 `
 
-agenda.innerHTML += fila
-
 let hora2 = (h<10?"0"+h:h)+":30"
 
-fila = `
+agenda.innerHTML += `
 <tr>
 <td>${hora2}</td>
 <td><input placeholder="evento..."></td>
 </tr>
 `
-
-agenda.innerHTML += fila
 
 }
 
@@ -150,8 +145,8 @@ let div=document.createElement("div")
 div.className="tarea"
 
 div.innerHTML=`
-<input type="checkbox">
-<input type="text" placeholder="Escribe tarea...">
+<input class="check" type="checkbox">
+<input class="texto" type="text" placeholder="Escribe tarea...">
 `
 
 tareas.appendChild(div)
@@ -181,8 +176,8 @@ let listaTareas=[]
 
 document.querySelectorAll(".tarea").forEach(t=>{
 
-let check=t.querySelector("input[type=checkbox]").checked
-let texto=t.querySelector("input[type=text]").value
+let check=t.querySelector(".check").checked
+let texto=t.querySelector(".texto").value
 
 listaTareas.push({check,texto})
 
@@ -234,8 +229,8 @@ let div=document.createElement("div")
 div.className="tarea"
 
 div.innerHTML=`
-<input type="checkbox" ${t.check?"checked":""}>
-<input type="text" value="${t.texto}">
+<input class="check" type="checkbox" ${t.check?"checked":""}>
+<input class="texto" type="text" value="${t.texto}">
 `
 
 tareas.appendChild(div)
