@@ -3,83 +3,25 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agenda</title>
-
 <style>
-body{
-  font-family: Arial;
-  background:#0f172a;
-  color:white;
-  text-align:center;
-  padding:20px;
-}
-
-table{
-  width:100%;
-  max-width:500px;
-  margin:auto;
-  border-collapse:collapse;
-}
-
-td{
-  padding:8px;
-  border-bottom:1px solid #334155;
-}
-
-input{
-  width:100%;
-  padding:8px;
-  border-radius:6px;
-  border:none;
-}
-
-textarea{
-  width:100%;
-  max-width:500px;
-  height:120px;
-  border-radius:8px;
-  padding:10px;
-  margin-top:10px;
-}
-
-button{
-  margin-top:20px;
-  padding:12px 20px;
-  border:none;
-  border-radius:8px;
-  background:#3b82f6;
-  color:white;
-  font-size:16px;
-}
-
-a{
-  color:#a78bfa;
-  display:block;
-  margin-top:20px;
-}
-
-.tarea{
-  max-width:500px;
-  margin:10px auto;
-  text-align:left;
-}
-
-.tarea input[type="text"]{
-  width:100%;
-  padding:10px;
-  border-radius:6px;
-  border:none;
-  margin-top:5px;
-}
+body{font-family:Arial;background:#0f172a;color:#fff;text-align:center;padding:20px}
+table{width:100%;max-width:520px;margin:auto;border-collapse:collapse}
+td{padding:8px;border-bottom:1px solid #334155}
+input{width:100%;padding:8px;border-radius:6px;border:none}
+textarea{width:100%;max-width:520px;height:120px;border-radius:8px;padding:10px;margin-top:10px}
+button{margin-top:16px;padding:12px 20px;border:none;border-radius:8px;background:#3b82f6;color:#fff;font-size:16px}
+a{color:#a78bfa;display:block;margin-top:18px}
+.tarea{max-width:520px;margin:10px auto;text-align:left}
+.tarea input[type="text"]{width:100%;padding:10px;border-radius:6px;border:none;margin-top:6px}
 </style>
 </head>
-
 <body>
 
 <h2>Agenda del día</h2>
 
 <table id="agenda"></table>
 
-<button onclick="guardarTodo()">Guardar día</button>
+<button id="guardarBtn">Guardar día</button>
 
 <h3>Notas del día</h3>
 <textarea id="notas" placeholder="Escribe notas del día..."></textarea>
@@ -87,147 +29,104 @@ a{
 <h3>Tareas del día</h3>
 <div id="tareas"></div>
 
-<button onclick="agregarTarea()">+ Nueva tarea</button>
+<button id="btnNuevaTarea">+ Nueva tarea</button>
 
 <a href="agenda-mes.html">Vista mensual</a>
 <a href="index.html">← Volver</a>
 
 <script>
+const agenda=document.getElementById("agenda")
+const notas=document.getElementById("notas")
+const tareas=document.getElementById("tareas")
+const btnGuardar=document.getElementById("guardarBtn")
+const btnNuevaTarea=document.getElementById("btnNuevaTarea")
 
-let agenda=document.getElementById("agenda")
-let notas=document.getElementById("notas")
-let tareas=document.getElementById("tareas")
+const keyHoy=()=>{
+  const hoy=new Date()
+  const y=hoy.getFullYear()
+  const m=String(hoy.getMonth()+1).padStart(2,'0')
+  const d=String(hoy.getDate()).padStart(2,'0')
+  return y+"-"+m+"-"+d
+}
 
-/* Crear agenda por horas */
+/* crear agenda */
 
 for(let h=6;h<=23;h++){
-
-let hora=(h<10?"0"+h:h)+":00"
-
-agenda.innerHTML+=`
-<tr>
-<td style="width:80px">${hora}</td>
-<td><input placeholder="evento..."></td>
-</tr>
-`
-
-let hora2=(h<10?"0"+h:h)+":30"
-
-agenda.innerHTML+=`
-<tr>
-<td>${hora2}</td>
-<td><input placeholder="evento..."></td>
-</tr>
-`
+  const h0=String(h).padStart(2,'0')
+  agenda.innerHTML+=`
+  <tr>
+    <td style="width:80px">${h0}:00</td>
+    <td><input placeholder="evento..."></td>
+  </tr>`
+  agenda.innerHTML+=`
+  <tr>
+    <td>${h0}:30</td>
+    <td><input placeholder="evento..."></td>
+  </tr>`
 }
 
-/* Agregar tarea */
+/* nueva tarea */
 
-function agregarTarea(){
-
-let div=document.createElement("div")
-div.className="tarea"
-
-div.innerHTML=`
-<label><input type="checkbox"> Tarea</label>
-<input type="text" placeholder="Escribe tarea...">
-`
-
-tareas.appendChild(div)
-
+btnNuevaTarea.onclick=()=>{
+  const div=document.createElement("div")
+  div.className="tarea"
+  div.innerHTML=`
+  <label><input type="checkbox"> Tarea</label>
+  <input type="text" placeholder="Escribe tarea...">
+  `
+  tareas.appendChild(div)
 }
 
-/* Guardar todo */
+/* guardar */
 
-function guardarTodo(){
+btnGuardar.onclick=()=>{
+  const hoy=keyHoy()
 
-let hoy=new Date().toISOString().split("T")[0]
+  const eventos=[]
+  document.querySelectorAll("#agenda input").forEach(i=>{
+    eventos.push(i.value)
+  })
+  localStorage.setItem("agenda-"+hoy,JSON.stringify(eventos))
 
-/* agenda */
+  localStorage.setItem("notas-"+hoy,notas.value)
 
-let eventos=[]
-document.querySelectorAll("#agenda input").forEach(i=>{
-eventos.push(i.value)
-})
+  const lista=[]
+  document.querySelectorAll(".tarea").forEach(t=>{
+    const check=t.querySelector("input[type=checkbox]").checked
+    const texto=t.querySelector("input[type=text]").value
+    lista.push({check,texto})
+  })
+  localStorage.setItem("tareas-"+hoy,JSON.stringify(lista))
 
-localStorage.setItem("agenda-"+hoy,JSON.stringify(eventos))
-
-/* notas */
-
-localStorage.setItem("notas-"+hoy,notas.value)
-
-/* tareas */
-
-let listaTareas=[]
-
-document.querySelectorAll(".tarea").forEach(t=>{
-
-let check=t.querySelector("input[type=checkbox]").checked
-let texto=t.querySelector("input[type=text]").value
-
-listaTareas.push({check,texto})
-
-})
-
-localStorage.setItem("tareas-"+hoy,JSON.stringify(listaTareas))
-
-alert("Guardado")
-
+  alert("Guardado")
 }
 
-/* cargar datos */
+/* cargar */
 
-function cargarTodo(){
+function cargar(){
+  const hoy=keyHoy()
 
-let hoy=new Date().toISOString().split("T")[0]
+  const eventos=JSON.parse(localStorage.getItem("agenda-"+hoy)||"[]")
+  document.querySelectorAll("#agenda input").forEach((i,idx)=>{
+    if(eventos[idx]) i.value=eventos[idx]
+  })
 
-/* agenda */
+  const n=localStorage.getItem("notas-"+hoy)
+  if(n) notas.value=n
 
-let eventos=localStorage.getItem("agenda-"+hoy)
-
-if(eventos){
-
-eventos=JSON.parse(eventos)
-
-document.querySelectorAll("#agenda input").forEach((i,index)=>{
-if(eventos[index]) i.value=eventos[index]
-})
-
+  const lista=JSON.parse(localStorage.getItem("tareas-"+hoy)||"[]")
+  lista.forEach(t=>{
+    const div=document.createElement("div")
+    div.className="tarea"
+    div.innerHTML=`
+    <label><input type="checkbox" ${t.check?"checked":""}> Tarea</label>
+    <input type="text" value="${t.texto}">
+    `
+    tareas.appendChild(div)
+  })
 }
 
-/* notas */
-
-let n=localStorage.getItem("notas-"+hoy)
-if(n) notas.value=n
-
-/* tareas */
-
-let listaTareas=localStorage.getItem("tareas-"+hoy)
-
-if(listaTareas){
-
-listaTareas=JSON.parse(listaTareas)
-
-listaTareas.forEach(t=>{
-
-let div=document.createElement("div")
-div.className="tarea"
-
-div.innerHTML=`
-<label><input type="checkbox" ${t.check?"checked":""}> Tarea</label>
-<input type="text" value="${t.texto}">
-`
-
-tareas.appendChild(div)
-
-})
-
-}
-
-}
-
-cargarTodo()
-
+cargar()
 </script>
 
 </body>
