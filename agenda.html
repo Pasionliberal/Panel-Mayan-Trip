@@ -156,6 +156,29 @@ tareas.appendChild(div)
 
 
 function guardarTodo(){
+  let listaTareas = localStorage.getItem("tareas-"+hoy)
+
+if(listaTareas){
+
+listaTareas = JSON.parse(listaTareas)
+
+listaTareas.forEach(t=>{
+
+let div=document.createElement("div")
+div.className="tarea"
+
+div.innerHTML=`
+<label>
+<input type="checkbox" ${t.check?"checked":""}> Tarea
+</label>
+<input type="text" value="${t.texto}">
+`
+
+tareas.appendChild(div)
+
+})
+
+}
 
 let inputs=document.querySelectorAll("#agenda input")
 
