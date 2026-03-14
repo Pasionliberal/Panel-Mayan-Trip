@@ -1,50 +1,86 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel Mayan Trip</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agenda</title>
 
 <style>
 
 body{
-font-family:Arial;
+font-family: Arial;
 background:#0f172a;
 color:white;
 text-align:center;
-padding:40px;
+padding:20px;
 }
 
-button{
+table{
 width:100%;
-padding:16px;
-margin:10px 0;
-background:#3b82f6;
+max-width:520px;
+margin:auto;
+border-collapse:collapse;
+}
+
+td{
+padding:8px;
+border-bottom:1px solid #334155;
+}
+
+input{
+padding:8px;
+border-radius:6px;
 border:none;
+}
+
+textarea{
+width:100%;
+max-width:520px;
+height:120px;
 border-radius:8px;
-font-size:18px;
-color:white;
-}
-
-.progreso{
-margin-top:20px;
-padding:15px;
-background:#1e293b;
-border-radius:10px;
-}
-
-.barra{
-height:20px;
-background:#334155;
-border-radius:10px;
-overflow:hidden;
+padding:10px;
 margin-top:10px;
 }
 
-.barra-interna{
-height:100%;
-background:#22c55e;
-width:0%;
+button{
+margin-top:16px;
+padding:12px 20px;
+border:none;
+border-radius:8px;
+background:#3b82f6;
+color:white;
+font-size:16px;
+}
+
+a{
+color:#a78bfa;
+display:block;
+margin-top:18px;
+}
+
+.tarea{
+display:flex;
+align-items:center;
+gap:10px;
+max-width:520px;
+margin:10px auto;
+padding:8px;
+border-radius:8px;
+}
+
+.tarea input[type="checkbox"]{
+width:20px;
+height:20px;
+}
+
+.tarea input[type="text"]{
+flex:1;
+padding:10px;
+border-radius:6px;
+border:none;
+}
+
+.tarea.completa{
+background:#166534;
 }
 
 </style>
@@ -52,59 +88,30 @@ width:0%;
 
 <body>
 
-<h2>Panel Mayan Trip</h2>
+<h2>Agenda del día</h2>
 
-<div id="fecha"></div>
-<div id="cambio"></div>
+<table id="agenda"></table>
 
-<div class="progreso">
-<h3>Progreso del día</h3>
-<div id="contador">0 / 0 tareas</div>
+<button id="guardarBtn">Guardar día</button>
 
-<div class="barra">
-<div id="barra" class="barra-interna"></div>
-</div>
+<h3>Notas del día</h3>
+<textarea id="notas" placeholder="Escribe notas del día..."></textarea>
 
-</div>
+<h3>Tareas del día</h3>
+<div id="tareas"></div>
 
-<br>
+<button id="btnNuevaTarea">+ Nueva tarea</button>
 
-<button onclick="location.href='agenda.html'">Agenda</button>
-
-<button onclick="location.href='servicios.html'">Servicios</button>
-
-<button onclick="location.href='contabilidad-personal.html'">
-Contabilidad Personal
-</button>
-
-<button onclick="location.href='contabilidad-trabajo.html'">
-Contabilidad Trabajo
-</button>
+<a href="agenda-mes.html">Vista mensual</a>
+<a href="index.html">← Volver</a>
 
 <script>
 
-/* fecha */
-
-let hoy = new Date()
-
-document.getElementById("fecha").innerHTML =
-hoy.toLocaleDateString("es-MX",{
-weekday:"long",
-year:"numeric",
-month:"long",
-day:"numeric"
-})
-
-/* tipo de cambio */
-
-fetch("https://api.exchangerate-api.com/v4/latest/USD")
-.then(r=>r.json())
-.then(data=>{
-document.getElementById("cambio").innerHTML =
-"USD → MXN: $" + data.rates.MXN.toFixed(2)
-})
-
-/* progreso */
+const agenda=document.getElementById("agenda")
+const notas=document.getElementById("notas")
+const tareas=document.getElementById("tareas")
+const btnGuardar=document.getElementById("guardarBtn")
+const btnNuevaTarea=document.getElementById("btnNuevaTarea")
 
 function keyHoy(){
 const hoy=new Date()
@@ -114,27 +121,129 @@ const d=String(hoy.getDate()).padStart(2,'0')
 return y+"-"+m+"-"+d
 }
 
-let hoyKey=keyHoy()
+/* agenda por horas */
 
-let tareas=JSON.parse(localStorage.getItem("tareas-"+hoyKey)||"[]")
+for(let h=6;h<=23;h++){
 
-let total=tareas.length
-let hechas=0
+const h0=String(h).padStart(2,'0')
 
-tareas.forEach(t=>{
-if(t.check) hechas++
-})
+agenda.innerHTML+=`
+<tr>
+<td style="width:80px">${h0}:00</td>
+<td><input style="width:100%" placeholder="evento..."></td>
+</tr>
+`
 
-document.getElementById("contador").innerHTML=
-hechas+" / "+total+" tareas"
-
-let progreso=0
-
-if(total>0){
-progreso=(hechas/total)*100
+agenda.innerHTML+=`
+<tr>
+<td>${h0}:30</td>
+<td><input style="width:100%" placeholder="evento..."></td>
+</tr>
+`
 }
 
-document.getElementById("barra").style.width=progreso+"%"
+/* nueva tarea */
+
+btnNuevaTarea.onclick=()=>{
+
+const div=document.createElement("div")
+div.className="tarea"
+
+div.innerHTML=`
+<input type="checkbox">
+<input type="text" placeholder="Escribe tarea...">
+`
+
+const check=div.querySelector("input[type=checkbox]")
+
+check.addEventListener("change",()=>{
+if(check.checked){
+div.classList.add("completa")
+}else{
+div.classList.remove("completa")
+}
+})
+
+tareas.appendChild(div)
+
+}
+
+/* guardar */
+
+btnGuardar.onclick=()=>{
+
+const hoy=keyHoy()
+
+const eventos=[]
+document.querySelectorAll("#agenda input").forEach(i=>{
+eventos.push(i.value)
+})
+
+localStorage.setItem("agenda-"+hoy,JSON.stringify(eventos))
+localStorage.setItem("notas-"+hoy,notas.value)
+
+const lista=[]
+
+document.querySelectorAll(".tarea").forEach(t=>{
+const check=t.querySelector("input[type=checkbox]").checked
+const texto=t.querySelector("input[type=text]").value
+lista.push({check,texto})
+})
+
+localStorage.setItem("tareas-"+hoy,JSON.stringify(lista))
+
+alert("Guardado")
+
+}
+
+/* cargar */
+
+function cargar(){
+
+const hoy=keyHoy()
+
+const eventos=JSON.parse(localStorage.getItem("agenda-"+hoy)||"[]")
+
+document.querySelectorAll("#agenda input").forEach((i,idx)=>{
+if(eventos[idx]) i.value=eventos[idx]
+})
+
+const n=localStorage.getItem("notas-"+hoy)
+if(n) notas.value=n
+
+const lista=JSON.parse(localStorage.getItem("tareas-"+hoy)||"[]")
+
+lista.forEach(t=>{
+
+const div=document.createElement("div")
+div.className="tarea"
+
+if(t.check){
+div.classList.add("completa")
+}
+
+div.innerHTML=`
+<input type="checkbox" ${t.check?"checked":""}>
+<input type="text" value="${t.texto}">
+`
+
+const check=div.querySelector("input[type=checkbox]")
+
+check.addEventListener("change",()=>{
+if(check.checked){
+div.classList.add("completa")
+}else{
+div.classList.remove("completa")
+}
+})
+
+tareas.appendChild(div)
+
+})
+
+}
+
+cargar()
 
 </script>
 
