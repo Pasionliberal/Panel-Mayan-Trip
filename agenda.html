@@ -7,7 +7,7 @@
 <style>
 
 body{
-font-family: Arial;
+font-family:Arial;
 background:#0f172a;
 color:white;
 text-align:center;
@@ -51,18 +51,14 @@ color:white;
 font-size:16px;
 }
 
-a{
-color:#a78bfa;
-display:block;
-margin-top:18px;
-}
-
 .tarea{
 display:flex;
 align-items:center;
 gap:10px;
 max-width:520px;
 margin:10px auto;
+padding:8px;
+border-radius:8px;
 }
 
 .tarea input[type="checkbox"]{
@@ -77,101 +73,148 @@ border-radius:6px;
 border:none;
 }
 
+.tarea.completa{
+background:#166534;
+}
+
 </style>
 </head>
 
 <body>
 
-<h2>Agenda del día</h2>
+<h2>Agenda</h2>
+
+<div id="fecha"></div>
 
 <table id="agenda"></table>
 
 <button id="guardarBtn">Guardar día</button>
 
 <h3>Notas del día</h3>
-<textarea id="notas" placeholder="Escribe notas del día..."></textarea>
+<textarea id="notas"></textarea>
 
-<h3>Tareas del día</h3>
+<h3>Tareas</h3>
+
 <div id="tareas"></div>
 
 <button id="btnNuevaTarea">+ Nueva tarea</button>
 
-<a href="agenda-mes.html">Vista mensual</a>
-<a href="index.html">← Volver</a>
+<br><br>
+
+<button onclick="location.href='agenda-mes.html'">📅 Calendario</button>
+<button onclick="location.href='https://pasionliberal.github.io/Panel-Mayan-Trip/'">🏠 Inicio</button>
 
 <script>
 
 const agenda=document.getElementById("agenda")
 const notas=document.getElementById("notas")
 const tareas=document.getElementById("tareas")
+const fechaTexto=document.getElementById("fecha")
+
 const btnGuardar=document.getElementById("guardarBtn")
 const btnNuevaTarea=document.getElementById("btnNuevaTarea")
 
-function keyHoy(){
-const hoy=new Date()
-const y=hoy.getFullYear()
-const m=String(hoy.getMonth()+1).padStart(2,'0')
-const d=String(hoy.getDate()).padStart(2,'0')
-return y+"-"+m+"-"+d
+/* leer fecha desde URL */
+
+const params=new URLSearchParams(window.location.search)
+
+let fechaActual=params.get("fecha")
+
+if(!fechaActual){
+
+let hoy=new Date()
+fechaActual=hoy.toISOString().split("T")[0]
+
 }
+
+/* mostrar fecha */
+
+let fechaObj=new Date(fechaActual)
+
+fechaTexto.innerHTML=fechaObj.toLocaleDateString("es-MX",{
+weekday:"long",
+year:"numeric",
+month:"long",
+day:"numeric"
+})
 
 /* crear agenda */
 
 for(let h=6;h<=23;h++){
 
-const h0=String(h).padStart(2,'0')
+let h0=String(h).padStart(2,'0')
 
 agenda.innerHTML+=`
 <tr>
 <td style="width:80px">${h0}:00</td>
-<td><input style="width:100%" placeholder="evento..."></td>
+<td><input style="width:100%"></td>
 </tr>
 `
 
 agenda.innerHTML+=`
 <tr>
 <td>${h0}:30</td>
-<td><input style="width:100%" placeholder="evento..."></td>
+<td><input style="width:100%"></td>
 </tr>
 `
+
 }
 
 /* nueva tarea */
 
 btnNuevaTarea.onclick=()=>{
-const div=document.createElement("div")
+
+let div=document.createElement("div")
 div.className="tarea"
 
 div.innerHTML=`
 <input type="checkbox">
-<input type="text" placeholder="Escribe tarea...">
+<input type="text">
 `
 
+let check=div.querySelector("input[type=checkbox]")
+
+check.addEventListener("change",()=>{
+
+if(check.checked){
+div.classList.add("completa")
+}else{
+div.classList.remove("completa")
+}
+
+})
+
 tareas.appendChild(div)
+
 }
 
 /* guardar */
 
 btnGuardar.onclick=()=>{
 
-const hoy=keyHoy()
+let key=fechaActual
 
-const eventos=[]
+let eventos=[]
+
 document.querySelectorAll("#agenda input").forEach(i=>{
 eventos.push(i.value)
 })
 
-localStorage.setItem("agenda-"+hoy,JSON.stringify(eventos))
-localStorage.setItem("notas-"+hoy,notas.value)
+localStorage.setItem("agenda-"+key,JSON.stringify(eventos))
+localStorage.setItem("notas-"+key,notas.value)
 
-const lista=[]
+let lista=[]
+
 document.querySelectorAll(".tarea").forEach(t=>{
-const check=t.querySelector("input[type=checkbox]").checked
-const texto=t.querySelector("input[type=text]").value
+
+let check=t.querySelector("input[type=checkbox]").checked
+let texto=t.querySelector("input[type=text]").value
+
 lista.push({check,texto})
+
 })
 
-localStorage.setItem("tareas-"+hoy,JSON.stringify(lista))
+localStorage.setItem("tareas-"+key,JSON.stringify(lista))
 
 alert("Guardado")
 
@@ -181,38 +224,16 @@ alert("Guardado")
 
 function cargar(){
 
-const hoy=keyHoy()
+let key=fechaActual
 
-const eventos=JSON.parse(localStorage.getItem("agenda-"+hoy)||"[]")
+let eventos=JSON.parse(localStorage.getItem("agenda-"+key)||"[]")
 
 document.querySelectorAll("#agenda input").forEach((i,idx)=>{
 if(eventos[idx]) i.value=eventos[idx]
 })
 
-const n=localStorage.getItem("notas-"+hoy)
+let n=localStorage.getItem("notas-"+key)
+
 if(n) notas.value=n
 
-const lista=JSON.parse(localStorage.getItem("tareas-"+hoy)||"[]")
-
-lista.forEach(t=>{
-
-const div=document.createElement("div")
-div.className="tarea"
-
-div.innerHTML=`
-<input type="checkbox" ${t.check?"checked":""}>
-<input type="text" value="${t.texto}">
-`
-
-tareas.appendChild(div)
-
-})
-
-}
-
-cargar()
-
-</script>
-
-</body>
-</html>
+let lista=JSON.parse(localStorage.getItem("tareas-"+key)||
