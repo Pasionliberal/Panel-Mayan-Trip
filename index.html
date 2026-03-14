@@ -26,6 +26,27 @@ font-size:18px;
 color:white;
 }
 
+.progreso{
+margin-top:20px;
+padding:15px;
+background:#1e293b;
+border-radius:10px;
+}
+
+.barra{
+height:20px;
+background:#334155;
+border-radius:10px;
+overflow:hidden;
+margin-top:10px;
+}
+
+.barra-interna{
+height:100%;
+background:#22c55e;
+width:0%;
+}
+
 </style>
 </head>
 
@@ -36,7 +57,17 @@ color:white;
 <div id="fecha"></div>
 <div id="cambio"></div>
 
-<br><br>
+<div class="progreso">
+<h3>Progreso del día</h3>
+<div id="contador">0 / 0 tareas</div>
+
+<div class="barra">
+<div id="barra" class="barra-interna"></div>
+</div>
+
+</div>
+
+<br>
 
 <button onclick="location.href='agenda.html'">Agenda</button>
 
@@ -52,6 +83,8 @@ Contabilidad Trabajo
 
 <script>
 
+/* fecha */
+
 let hoy = new Date()
 
 document.getElementById("fecha").innerHTML =
@@ -62,12 +95,46 @@ month:"long",
 day:"numeric"
 })
 
+/* tipo de cambio */
+
 fetch("https://api.exchangerate-api.com/v4/latest/USD")
 .then(r=>r.json())
 .then(data=>{
 document.getElementById("cambio").innerHTML =
 "USD → MXN: $" + data.rates.MXN.toFixed(2)
 })
+
+/* progreso */
+
+function keyHoy(){
+const hoy=new Date()
+const y=hoy.getFullYear()
+const m=String(hoy.getMonth()+1).padStart(2,'0')
+const d=String(hoy.getDate()).padStart(2,'0')
+return y+"-"+m+"-"+d
+}
+
+let hoyKey=keyHoy()
+
+let tareas=JSON.parse(localStorage.getItem("tareas-"+hoyKey)||"[]")
+
+let total=tareas.length
+let hechas=0
+
+tareas.forEach(t=>{
+if(t.check) hechas++
+})
+
+document.getElementById("contador").innerHTML=
+hechas+" / "+total+" tareas"
+
+let progreso=0
+
+if(total>0){
+progreso=(hechas/total)*100
+}
+
+document.getElementById("barra").style.width=progreso+"%"
 
 </script>
 
