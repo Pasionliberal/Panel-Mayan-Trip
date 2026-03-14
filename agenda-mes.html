@@ -1,2 +1,157 @@
-<h2>Vista mensual</h2>
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendario</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+h2{
+margin-bottom:10px;
+}
+
+.calendario{
+max-width:520px;
+margin:auto;
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:6px;
+}
+
+.dia{
+background:#1e293b;
+padding:12px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.dia:hover{
+background:#334155;
+}
+
+.encabezado{
+font-weight:bold;
+}
+
+.navegacion{
+margin-bottom:15px;
+}
+
+button{
+padding:10px 15px;
+border:none;
+border-radius:6px;
+background:#3b82f6;
+color:white;
+margin:5px;
+}
+
+a{
+display:block;
+margin-top:20px;
+color:#a78bfa;
+}
+
+</style>
+</head>
+
+
+<body>
+
+<h2 id="mesTitulo"></h2>
+
+<div class="navegacion">
+<button onclick="cambiarMes(-1)">◀</button>
+<button onclick="cambiarMes(1)">▶</button>
+</div>
+
+<div class="calendario" id="calendario"></div>
+
 <a href="agenda.html">← Volver a agenda</a>
+
+
+<script>
+
+const calendario=document.getElementById("calendario")
+const titulo=document.getElementById("mesTitulo")
+
+let fecha=new Date()
+
+const diasSemana=["Lu","Ma","Mi","Ju","Vi","Sa","Do"]
+
+function generarCalendario(){
+
+calendario.innerHTML=""
+
+let año=fecha.getFullYear()
+let mes=fecha.getMonth()
+
+let primerDia=new Date(año,mes,1).getDay()
+
+if(primerDia===0) primerDia=7
+
+let diasMes=new Date(año,mes+1,0).getDate()
+
+titulo.innerHTML=fecha.toLocaleDateString("es-MX",{
+month:"long",
+year:"numeric"
+})
+
+diasSemana.forEach(d=>{
+calendario.innerHTML+=`<div class="encabezado">${d}</div>`
+})
+
+for(let i=1;i<primerDia;i++){
+calendario.innerHTML+=`<div></div>`
+}
+
+for(let d=1;d<=diasMes;d++){
+
+let diaElemento=document.createElement("div")
+diaElemento.className="dia"
+diaElemento.innerHTML=d
+
+diaElemento.onclick=()=>{
+abrirAgenda(d)
+}
+
+calendario.appendChild(diaElemento)
+
+}
+
+}
+
+function abrirAgenda(dia){
+
+let año=fecha.getFullYear()
+let mes=String(fecha.getMonth()+1).padStart(2,"0")
+let d=String(dia).padStart(2,"0")
+
+let fechaSeleccionada=`${año}-${mes}-${d}`
+
+window.location.href=`agenda.html?fecha=${fechaSeleccionada}`
+
+}
+
+function cambiarMes(valor){
+
+fecha.setMonth(fecha.getMonth()+valor)
+generarCalendario()
+
+}
+
+generarCalendario()
+
+</script>
+
+</body>
+</html>
