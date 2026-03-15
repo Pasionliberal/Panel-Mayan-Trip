@@ -35,7 +35,7 @@ color:white;
 
 table{
 width:100%;
-max-width:800px;
+max-width:900px;
 margin:auto;
 margin-top:20px;
 border-collapse:collapse;
@@ -49,7 +49,6 @@ padding:8px;
 </style>
 
 </head>
-
 
 <body>
 
@@ -65,9 +64,10 @@ padding:8px;
 
 <input id="hora" type="time">
 
-<select id="tipo">
+<select id="tipoServicio">
 <option>SALIDA</option>
 <option>LLEGADA</option>
+<option>TRANSFER</option>
 </select>
 
 <input id="origen" placeholder="Origen">
@@ -79,6 +79,15 @@ padding:8px;
 <input id="destino" placeholder="Destino">
 
 <input id="balance" type="number" placeholder="Balance pendiente">
+
+<select id="progreso">
+<option>Pendiente</option>
+<option>En curso</option>
+<option>Completado</option>
+<option>Finalizado</option>
+<option>Cancelado</option>
+<option>No show</option>
+</select>
 
 <br>
 
@@ -96,6 +105,7 @@ padding:8px;
 <th>Pax</th>
 <th>Destino</th>
 <th>Balance</th>
+<th>Progreso</th>
 </tr>
 
 </table>
@@ -125,12 +135,13 @@ let servicio={
 
 fecha:document.getElementById("fecha").value,
 hora:document.getElementById("hora").value,
-tipo:document.getElementById("tipo").value,
+tipoServicio:document.getElementById("tipoServicio").value,
 origen:document.getElementById("origen").value,
 cliente:document.getElementById("cliente").value,
 pax:Number(document.getElementById("pax").value),
 destino:document.getElementById("destino").value,
-balance:Number(document.getElementById("balance").value)
+balance:Number(document.getElementById("balance").value),
+progreso:document.getElementById("progreso").value
 
 }
 
@@ -157,6 +168,7 @@ tabla.innerHTML=`
 <th>Pax</th>
 <th>Destino</th>
 <th>Balance</th>
+<th>Progreso</th>
 </tr>
 `
 
@@ -172,12 +184,13 @@ lista.forEach(s=>{
 tabla.innerHTML+=`
 <tr>
 <td>${s.hora}</td>
-<td>${s.tipo}</td>
+<td>${s.tipoServicio}</td>
 <td>${s.origen}</td>
 <td>${s.cliente}</td>
 <td>${s.pax}</td>
 <td>${s.destino}</td>
 <td>$${s.balance}</td>
+<td>${s.progreso}</td>
 </tr>
 `
 
