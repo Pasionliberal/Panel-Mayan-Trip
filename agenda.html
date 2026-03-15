@@ -236,4 +236,43 @@ let n=localStorage.getItem("notas-"+key)
 
 if(n) notas.value=n
 
-let lista=JSON.parse(localStorage.getItem("tareas-"+key)||
+let lista=JSON.parse(localStorage.getItem("tareas-"+key)||"[]")
+
+lista.forEach(t=>{
+
+let div=document.createElement("div")
+div.className="tarea"
+
+if(t.check){
+div.classList.add("completa")
+}
+
+div.innerHTML=`
+<input type="checkbox" ${t.check?"checked":""}>
+<input type="text" value="${t.texto}">
+`
+
+let check=div.querySelector("input[type=checkbox]")
+
+check.addEventListener("change",()=>{
+
+if(check.checked){
+div.classList.add("completa")
+}else{
+div.classList.remove("completa")
+}
+
+})
+
+tareas.appendChild(div)
+
+})
+
+}
+
+cargar()
+
+</script>
+
+</body>
+</html>
