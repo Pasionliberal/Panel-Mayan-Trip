@@ -229,7 +229,13 @@ let key=fechaActual
 let eventos=JSON.parse(localStorage.getItem("agenda-"+key)||"[]")
 
 document.querySelectorAll("#agenda input").forEach((i,idx)=>{
-if(eventos[idx]) i.value=eventos[idx]
+if(eventos[idx]){
+    if(typeof eventos[idx] === "object"){
+        i.value = eventos[idx].evento
+    }else{
+        i.value = eventos[idx]
+    }
+}
 })
 
 let n=localStorage.getItem("notas-"+key)
