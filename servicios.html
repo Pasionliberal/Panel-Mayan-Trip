@@ -114,7 +114,20 @@ let lista=JSON.parse(localStorage.getItem(key))||[]
 lista.push(servicio)
 
 localStorage.setItem(key,JSON.stringify(lista))
+// agregar a agenda automáticamente
 
+let agendaKey="agenda-"+fecha
+
+let agenda=JSON.parse(localStorage.getItem(agendaKey))||[]
+
+let texto="Transfer "+cliente+" "+origen+" → "+destino
+
+agenda.push({
+hora:hora,
+evento:texto
+})
+
+localStorage.setItem(agendaKey,JSON.stringify(agenda))
 location.reload()
 
 }
