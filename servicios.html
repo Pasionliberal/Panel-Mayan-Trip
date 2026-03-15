@@ -1,3 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Servicios</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+input{
+width:90%;
+max-width:400px;
+padding:12px;
+margin:10px;
+border-radius:8px;
+border:none;
+}
+
+button{
+padding:12px 20px;
+border:none;
+border-radius:8px;
+background:#3b82f6;
+color:white;
+margin:10px;
+}
+
+#mapa{
+margin-top:20px;
+width:100%;
+height:500px;
+border-radius:10px;
+}
+
+</style>
+</head>
+
+<body>
+
 <h2>Servicios</h2>
 
-<a href="index.html">← Volver</a>
+<input id="origen" placeholder="Origen">
+
+<input id="destino" placeholder="Destino">
+
+<br>
+
+<button onclick="abrirRuta()">Ver ruta</button>
+
+<br><br>
+
+<button onclick="location.href='https://pasionliberal.github.io/Panel-Mayan-Trip/'">
+🏠 Inicio
+</button>
+
+<iframe id="mapa"></iframe>
+
+<script>
+
+function abrirRuta(){
+
+let origen=document.getElementById("origen").value
+let destino=document.getElementById("destino").value
+
+let url=`https://www.google.com/maps?q=${origen}+to+${destino}&output=embed`
+
+document.getElementById("mapa").src=url
+
+}
+
+</script>
+
+</body>
+</html>
