@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Contabilidad</title>
@@ -28,17 +27,23 @@ border-bottom:1px solid #334155;
 padding:8px;
 }
 
-</style>
+button{
+padding:10px 20px;
+margin-top:10px;
+background:#3b82f6;
+color:white;
+border:none;
+border-radius:8px;
+}
 
+</style>
 </head>
 
 <body>
 
 <h2>Contabilidad</h2>
 
-<button onclick="location.href='https://pasionliberal.github.io/Panel-Mayan-Trip/'">
-🏠 Inicio
-</button>
+<button onclick="location.href='index.html'">🏠 Inicio</button>
 
 <h3>Balances pendientes</h3>
 
@@ -83,7 +88,7 @@ tabla.innerHTML+=`
 </tr>
 `
 
-balanceTotal+=s.balance
+balanceTotal+=Number(s.balance)
 
 }
 
@@ -102,5 +107,4 @@ cargar()
 </script>
 
 </body>
-
 </html>
