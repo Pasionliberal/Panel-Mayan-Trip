@@ -187,6 +187,9 @@ lista[index][campo]=nuevo
 
 localStorage.setItem("servicios-"+hoy,JSON.stringify(lista))
 
+// actualizar agenda
+actualizarAgenda()
+
 location.reload()
 
 }
@@ -203,10 +206,35 @@ lista.splice(index,1)
 
 localStorage.setItem("servicios-"+hoy,JSON.stringify(lista))
 
+// actualizar agenda
+actualizarAgenda()
+
 location.reload()
 
-}
+  }
 
 cargar()
+function actualizarAgenda(){
 
-</script></body></html>
+let hoy=new Date().toISOString().split("T")[0]
+
+let servicios=JSON.parse(localStorage.getItem("servicios-"+hoy))||[]
+
+let agenda=[]
+
+servicios.forEach(s=>{
+
+agenda.push({
+hora:s.hora,
+evento:"Transfer "+s.cliente+" "+s.origen+" → "+s.destino
+})
+
+})
+
+localStorage.setItem("agenda-"+hoy,JSON.stringify(agenda))
+
+}
+  
+</script>
+</body>
+</html>
