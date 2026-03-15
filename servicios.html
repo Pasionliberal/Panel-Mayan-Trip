@@ -1,82 +1,199 @@
-<!DOCTYPE html>
-<html>
-
-<head>
+<!DOCTYPE html><html><head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Servicios</title>
-
-<style>
+<title>Servicios</title><style>
 
 body{
 font-family:Arial;
 background:#0f172a;
 color:white;
 text-align:center;
-padding:20px;
+padding:25px;
 }
 
-input{
-width:90%;
-max-width:400px;
+input,select{
+width:100%;
 padding:12px;
-margin:10px;
+margin:8px 0;
 border-radius:8px;
 border:none;
 }
 
 button{
-padding:12px 20px;
-border:none;
-border-radius:8px;
-background:#3b82f6;
-color:white;
-margin:10px;
-}
-
-#mapa{
-margin-top:20px;
 width:100%;
-height:500px;
+padding:15px;
+margin-top:10px;
+border:none;
 border-radius:10px;
+background:#4f7df3;
+color:white;
+font-size:16px;
 }
 
-</style>
-</head>
+.panel{
+background:#1e293b;
+padding:20px;
+border-radius:15px;
+max-width:420px;
+margin:auto;
+}
 
-<body>
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+}
 
-<h2>Servicios</h2>
+td,th{
+padding:8px;
+border-bottom:1px solid #334155;
+}
 
-<input id="origen" placeholder="Origen">
+td{
+cursor:pointer;
+}
 
-<input id="destino" placeholder="Destino">
+.borrar{
+color:#ff6b6b;
+cursor:pointer;
+}
 
-<br>
+</style></head><body><h2>Nuevo servicio</h2><div class="panel"><input type="date" id="fecha"><input type="time" id="hora"><select id="tipo">
+<option>TRANSFER</option>
+<option>SALIDA</option>
+<option>LLEGADA</option>
+</select><input placeholder="Origen" id="origen"><input placeholder="Destino" id="destino"><input placeholder="Cliente" id="cliente"><input type="number" placeholder="Pax" id="pax"><input type="number" placeholder="Balance pendiente" id="balance"><select id="estado">
+<option>PENDIENTE</option>
+<option>EN CURSO</option>
+<option>COMPLETADO</option>
+<option>FINALIZADO</option>
+<option>CANCELADO</option>
+<option>NO SHOW</option>
+</select><button onclick="guardar()">Guardar servicio</button>
 
-<button onclick="abrirRuta()">Ver ruta</button>
-
-<br><br>
-
-<button onclick="location.href='https://pasionliberal.github.io/Panel-Mayan-Trip/'">
+<button onclick="location.href='index.html'">
 🏠 Inicio
-</button>
+</button></div><h3>Servicios del día</h3><table id="tabla"><tr>
+<th>Hora</th>
+<th>Cliente</th>
+<th>Ruta</th>
+<th>Pax</th>
+<th>Estado</th>
+<th></th>
+</tr></table><script>
 
-<iframe id="mapa"></iframe>
+let tabla=document.getElementById("tabla")
 
-<script>
+function guardar(){
 
-function abrirRuta(){
-
+let fecha=document.getElementById("fecha").value
+let hora=document.getElementById("hora").value
+let tipo=document.getElementById("tipo").value
 let origen=document.getElementById("origen").value
 let destino=document.getElementById("destino").value
+let cliente=document.getElementById("cliente").value
+let pax=document.getElementById("pax").value
+let balance=document.getElementById("balance").value
+let estado=document.getElementById("estado").value
 
-let url=`https://www.google.com/maps?q=${origen}+to+${destino}&output=embed`
+let servicio={
+fecha,
+hora,
+tipo,
+origen,
+destino,
+cliente,
+pax,
+balance,
+estado
+}
 
-document.getElementById("mapa").src=url
+let key="servicios-"+fecha
+
+let lista=JSON.parse(localStorage.getItem(key))||[]
+
+lista.push(servicio)
+
+localStorage.setItem(key,JSON.stringify(lista))
+
+location.reload()
 
 }
 
-</script>
+function cargar(){
 
-</body>
-</html>
+let hoy=new Date().toISOString().split("T")[0]
+
+let lista=JSON.parse(localStorage.getItem("servicios-"+hoy))||[]
+
+lista.forEach((s,index)=>{
+
+tabla.innerHTML+=`
+<tr>
+
+<td onclick="editar(${index},'hora')">${s.hora}</td>
+
+<td onclick="editar(${index},'cliente')">${s.cliente}</td>
+
+<td onclick="editar(${index},'ruta')">${s.origen} → ${s.destino}</td>
+
+<td onclick="editar(${index},'pax')">${s.pax}</td>
+
+<td onclick="editar(${index},'estado')">${s.estado}</td>
+
+<td class="borrar" onclick="borrar(${index})">🗑</td>
+
+</tr>
+`
+
+})
+
+}
+
+function editar(index,campo){
+
+let hoy=new Date().toISOString().split("T")[0]
+
+let lista=JSON.parse(localStorage.getItem("servicios-"+hoy))
+
+let nuevo=prompt("Nuevo valor:")
+
+if(nuevo){
+
+if(campo==="ruta"){
+
+let partes=nuevo.split(",")
+
+lista[index].origen=partes[0]
+lista[index].destino=partes[1]
+
+}else{
+
+lista[index][campo]=nuevo
+
+}
+
+localStorage.setItem("servicios-"+hoy,JSON.stringify(lista))
+
+location.reload()
+
+}
+
+}
+
+function borrar(index){
+
+let hoy=new Date().toISOString().split("T")[0]
+
+let lista=JSON.parse(localStorage.getItem("servicios-"+hoy))
+
+lista.splice(index,1)
+
+localStorage.setItem("servicios-"+hoy,JSON.stringify(lista))
+
+location.reload()
+
+}
+
+cargar()
+
+</script></body></html>
