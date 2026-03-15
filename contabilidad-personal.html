@@ -1,2 +1,106 @@
-<h2>Contabilidad Personal</h2>
-<a href="index.html">← Volver</a>
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contabilidad</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+table{
+width:100%;
+max-width:700px;
+margin:auto;
+margin-top:20px;
+border-collapse:collapse;
+}
+
+td,th{
+border-bottom:1px solid #334155;
+padding:8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>Contabilidad</h2>
+
+<button onclick="location.href='https://pasionliberal.github.io/Panel-Mayan-Trip/'">
+🏠 Inicio
+</button>
+
+<h3>Balances pendientes</h3>
+
+<table id="tabla">
+
+<tr>
+<th>Fecha</th>
+<th>Cliente</th>
+<th>Servicio</th>
+<th>Balance</th>
+</tr>
+
+</table>
+
+<h3 id="total"></h3>
+
+<script>
+
+let tabla=document.getElementById("tabla")
+let total=document.getElementById("total")
+
+function cargar(){
+
+let balanceTotal=0
+
+for(let key in localStorage){
+
+if(key.startsWith("servicios-")){
+
+let lista=JSON.parse(localStorage.getItem(key))
+
+lista.forEach(s=>{
+
+if(s.balance>0){
+
+tabla.innerHTML+=`
+<tr>
+<td>${s.fecha}</td>
+<td>${s.cliente}</td>
+<td>${s.origen} → ${s.destino}</td>
+<td>$${s.balance}</td>
+</tr>
+`
+
+balanceTotal+=s.balance
+
+}
+
+})
+
+}
+
+}
+
+total.innerHTML="Balance total pendiente: $" + balanceTotal
+
+}
+
+cargar()
+
+</script>
+
+</body>
+
+</html>
