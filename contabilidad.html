@@ -100,47 +100,62 @@ function cargarSub(){
 let c=document.getElementById("categoria").value
 let sub=document.getElementById("sub")
 
-sub.innerHTML=""
+sub.innerHTML="<option>Subcategoría</option>"
 
 if(c==="trabajo"){
-
 sub.innerHTML+=`<option>Sueldo</option>`
 sub.innerHTML+=`<option>Salario</option>`
 sub.innerHTML+=`<option>Extras 1</option>`
 sub.innerHTML+=`<option>Extras 2</option>`
 sub.innerHTML+=`<option>Tips MXN</option>`
 sub.innerHTML+=`<option>Tips USD</option>`
-
+sub.innerHTML+=`<option>Bono</option>`
+sub.innerHTML+=`<option>Comisión</option>`
 }
 
 if(c==="servicios"){
-
 sub.innerHTML+=`<option>Transfer</option>`
+sub.innerHTML+=`<option>Servicio privado</option>`
 sub.innerHTML+=`<option>Extras servicio</option>`
 sub.innerHTML+=`<option>Balance servicio</option>`
-
 }
 
 if(c==="personal"){
-
 sub.innerHTML+=`<option>Comida</option>`
-sub.innerHTML+=`<option>Casa</option>`
-sub.innerHTML+=`<option>Servicios</option>`
+sub.innerHTML+=`<option>Supermercado</option>`
+sub.innerHTML+=`<option>Renta</option>`
+sub.innerHTML+=`<option>Luz</option>`
+sub.innerHTML+=`<option>Agua</option>`
+sub.innerHTML+=`<option>Internet</option>`
+sub.innerHTML+=`<option>Teléfono</option>`
 sub.innerHTML+=`<option>Salud</option>`
+sub.innerHTML+=`<option>Farmacia</option>`
+sub.innerHTML+=`<option>Ropa</option>`
 sub.innerHTML+=`<option>Ocio</option>`
+sub.innerHTML+=`<option>Suscripciones</option>`
 sub.innerHTML+=`<option>Otros</option>`
-
 }
 
 if(c==="vehiculo"){
-
 sub.innerHTML+=`<option>Gasolina</option>`
 sub.innerHTML+=`<option>Mantenimiento</option>`
+sub.innerHTML+=`<option>Refacciones</option>`
 sub.innerHTML+=`<option>Llantas</option>`
+sub.innerHTML+=`<option>Aceite</option>`
 sub.innerHTML+=`<option>Seguro</option>`
+sub.innerHTML+=`<option>Estacionamiento</option>`
+sub.innerHTML+=`<option>Casetas</option>`
 sub.innerHTML+=`<option>Multas</option>`
+sub.innerHTML+=`<option>Lavado</option>`
 sub.innerHTML+=`<option>Otros</option>`
+}
 
+if(c==="finanzas"){
+sub.innerHTML+=`<option>Ahorro</option>`
+sub.innerHTML+=`<option>Inversión</option>`
+sub.innerHTML+=`<option>Crédito</option>`
+sub.innerHTML+=`<option>Pago tarjeta</option>`
+sub.innerHTML+=`<option>Transferencia</option>`
 }
 
 }
