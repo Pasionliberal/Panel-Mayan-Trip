@@ -1,110 +1,149 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Contabilidad</title>
-
-<style>
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"><title>Contabilidad</title><style>
 
 body{
 font-family:Arial;
 background:#0f172a;
 color:white;
 text-align:center;
+padding:25px;
+}
+
+.panel{
+background:#1e293b;
 padding:20px;
+border-radius:15px;
+max-width:420px;
+margin:auto;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin:6px 0;
+border-radius:8px;
+border:none;
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+background:#4f7df3;
+color:white;
 }
 
 table{
 width:100%;
-max-width:700px;
-margin:auto;
 margin-top:20px;
 border-collapse:collapse;
 }
 
 td,th{
-border-bottom:1px solid #334155;
 padding:8px;
+border-bottom:1px solid #334155;
 }
 
-button{
-padding:10px 20px;
-margin-top:10px;
-background:#3b82f6;
-color:white;
-border:none;
-border-radius:8px;
-}
+</style></head><body><h2>Contabilidad</h2><button onclick="location.href='index.html'">🏠 Inicio</button>
 
-</style>
-</head>
+<div class="panel"><h3>Conversor USD → MXN</h3><input id="usd" placeholder="USD">
+<input id="mxn" placeholder="MXN (auto)"></div><div class="panel"><h3>Nuevo movimiento</h3><input type="date" id="fecha"><select id="tipo">
+<option>Ingreso</option>
+<option>Gasto</option>
+</select><input placeholder="Categoría" id="categoria"><input placeholder="Subcategoría" id="subcategoria"><input placeholder="Monto" id="monto"><select id="moneda">
+<option>MXN</option>
+<option>USD</option>
+</select><input placeholder="Nota" id="nota"><button onclick="guardar()">Guardar</button>
 
-<body>
-
-<h2>Contabilidad</h2>
-
-<button onclick="location.href='index.html'">🏠 Inicio</button>
-
-<h3>Balances pendientes</h3>
-
-<table id="tabla">
-
-<tr>
+</div><h3>Movimientos</h3><table id="tabla"><tr>
 <th>Fecha</th>
-<th>Cliente</th>
-<th>Servicio</th>
-<th>Balance</th>
-</tr>
+<th>Tipo</th>
+<th>Categoría</th>
+<th>Monto</th>
+</tr></table><h3 id="balance"></h3><script>
 
-</table>
+let tipoCambio=0
 
-<h3 id="total"></h3>
+fetch("https://api.exchangerate.host/latest?base=USD&symbols=MXN")
+.then(r=>r.json())
+.then(d=>{
+tipoCambio=d.rates.MXN
+})
 
-<script>
+document.getElementById("usd").oninput=function(){
 
-let tabla=document.getElementById("tabla")
-let total=document.getElementById("total")
+let usd=this.value
+
+document.getElementById("mxn").value=(usd*tipoCambio).toFixed(2)
+
+}
+
+function guardar(){
+
+let mov={
+
+fecha:document.getElementById("fecha").value,
+tipo:document.getElementById("tipo").value,
+categoria:document.getElementById("categoria").value,
+sub:document.getElementById("subcategoria").value,
+monto:Number(document.getElementById("monto").value),
+moneda:document.getElementById("moneda").value,
+nota:document.getElementById("nota").value
+
+}
+
+if(mov.moneda==="USD"){
+mov.monto=(mov.monto*tipoCambio)
+}
+
+let lista=JSON.parse(localStorage.getItem("contabilidad"))||[]
+
+lista.push(mov)
+
+localStorage.setItem("contabilidad",JSON.stringify(lista))
+
+location.reload()
+
+}
 
 function cargar(){
 
-let balanceTotal=0
+let tabla=document.getElementById("tabla")
 
-for(let key in localStorage){
+let lista=JSON.parse(localStorage.getItem("contabilidad"))||[]
 
-if(key.startsWith("servicios-")){
+let ingresos=0
+let gastos=0
 
-let lista=JSON.parse(localStorage.getItem(key))
-
-lista.forEach(s=>{
-
-if(s.balance>0){
+lista.forEach(m=>{
 
 tabla.innerHTML+=`
 <tr>
-<td>${s.fecha}</td>
-<td>${s.cliente}</td>
-<td>${s.origen} → ${s.destino}</td>
-<td>$${s.balance}</td>
+<td>${m.fecha}</td>
+<td>${m.tipo}</td>
+<td>${m.categoria}</td>
+<td>$${m.monto.toFixed(2)}</td>
 </tr>
 `
 
-balanceTotal+=Number(s.balance)
-
+if(m.tipo==="Ingreso"){
+ingresos+=m.monto
+}else{
+gastos+=m.monto
 }
 
 })
 
-}
+let balance=ingresos-gastos
 
-}
-
-total.innerHTML="Balance total pendiente: $" + balanceTotal
+document.getElementById("balance").innerHTML=
+"Ingresos: $"+ingresos.toFixed(2)+
+" | Gastos: $"+gastos.toFixed(2)+
+" | Balance: $"+balance.toFixed(2)
 
 }
 
 cargar()
 
-</script>
-
-</body>
-</html>
+</script></body></html>
