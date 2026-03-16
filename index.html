@@ -84,8 +84,14 @@ document.getElementById("fecha").innerHTML=fecha
 fetch("https://api.exchangerate.host/latest?base=USD&symbols=MXN")
 .then(r=>r.json())
 .then(d=>{
-document.getElementById("usd").innerHTML=
-"USD → MXN: $" + d.rates.MXN.toFixed(2)
+
+let tc = d.rates.MXN
+
+localStorage.setItem("tipoCambio", tc)
+
+document.getElementById("usd").innerHTML =
+"USD → MXN: $" + tc.toFixed(2)
+
 })
 
 let servicios=0
