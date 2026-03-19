@@ -258,7 +258,43 @@ document.getElementById("balance").innerHTML=
 
 }
 
-cargar()
+function cargarMovimientos(){
 
+let tabla=document.getElementById("tabla")
+
+let lista=JSON.parse(localStorage.getItem("movimientos")||"[]")
+
+lista.forEach((m,i)=>{
+
+let fila=`
+<tr>
+<td>${m.fecha}</td>
+<td>${m.tipo}</td>
+<td>${m.categoria} - ${m.sub}</td>
+<td>${m.monto} ${m.moneda}</td>
+<td>
+<button onclick="borrar(${i})">❌</button>
+</td>
+</tr>
+`
+
+tabla.innerHTML+=fila
+
+})
+
+}
+
+cargarMovimientos()
+function borrar(i){
+
+let lista=JSON.parse(localStorage.getItem("movimientos")||"[]")
+
+lista.splice(i,1)
+
+localStorage.setItem("movimientos",JSON.stringify(lista))
+
+location.reload()
+
+}
 </script></body>
 </html>
