@@ -109,7 +109,7 @@ estado
 
 let key="servicios-"+fecha
 
-let lista=JSON.parse(localStorage.getItem(key))||[]
+let lista=JSON.parse(localStorage.getItem(key) || "[]")
 
 lista.push(servicio)
 
