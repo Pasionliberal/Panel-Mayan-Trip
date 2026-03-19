@@ -1,101 +1,130 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+<html lang="es">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Contabilidad</title><style>
+<meta charset="UTF-8">
+<title>Contabilidad</title>
+
+<style>
 body{
-font-family:Arial;
+font-family:sans-serif;
 background:#0f172a;
-color:white;
+color:#fff;
+padding:20px;
+}
+
+h2{
 text-align:center;
-padding:25px;
+margin-bottom:10px;
 }
 
 .panel{
 background:#1e293b;
-padding:20px;
-border-radius:15px;
-max-width:420px;
-margin:auto;
+padding:15px;
+border-radius:12px;
 margin-bottom:20px;
 }
 
-input,select{
+input,select,button{
 width:100%;
 padding:10px;
-margin:6px 0;
+margin:5px 0;
 border-radius:8px;
 border:none;
 }
 
 button{
-width:100%;
-padding:14px;
-margin-top:10px;
-border:none;
-border-radius:10px;
-background:#4f7df3;
+background:#3b82f6;
 color:white;
+font-weight:bold;
 }
 
 table{
 width:100%;
-margin-top:20px;
+margin-top:10px;
 border-collapse:collapse;
 }
 
-td,th{
+th,td{
 padding:8px;
 border-bottom:1px solid #334155;
+text-align:center;
 }
 
 .icon{
 cursor:pointer;
-margin:0 6px;
 }
-</style></head><body><h2>Contabilidad</h2><button onclick="location.href='index.html'">🏠 Inicio</button>
+</style>
 
-<div class="panel"><h3>Conversor USD → MXN</h3><input id="usd" placeholder="USD">
-<input id="mxn" placeholder="MXN"><div id="tc"></div></div><div class="panel"><h3>Nuevo movimiento</h3><input type="date" id="fecha"><select id="tipo">
+</head>
+<body>
+
+<button onclick="location.href='index.html'">🏠 Inicio</button>
+
+<h2>Contabilidad</h2>
+
+<div class="panel">
+<h3>Conversor USD → MXN</h3>
+<input id="usd" placeholder="USD" oninput="convertir()">
+<input id="mxn" placeholder="MXN" readonly>
+</div>
+
+<div class="panel">
+<h3>Nuevo movimiento</h3>
+
+<input type="date" id="fecha">
+
+<select id="tipo">
 <option>Ingreso</option>
 <option>Gasto</option>
-</select><select id="categoria" onchange="cargarSub()">
+</select>
+
+<select id="categoria" onchange="cargarSub()">
 <option value="">Categoría</option>
 <option value="trabajo">Trabajo</option>
 <option value="servicios">Servicios</option>
 <option value="personal">Personal</option>
 <option value="vehiculo">Vehículo</option>
 <option value="finanzas">Finanzas</option>
-</select><select id="sub">
+</select>
+
+<select id="sub">
 <option value="">Subcategoría</option>
-</select><input placeholder="Monto" id="monto"><select id="moneda">
+</select>
+
+<input id="monto" placeholder="Monto">
+
+<select id="moneda">
 <option>MXN</option>
 <option>USD</option>
-</select><input placeholder="Nota" id="nota"><button onclick="guardar()">Guardar movimiento</button>
+</select>
 
-</div><h3>Movimientos</h3><table id="tabla">
-<tr>
-<th>Fecha</th>
-<th>Tipo</th>
-<th>Categoría</th>
-<th>Monto</th>
-<th></th>
-</tr>
-</table><h3 id="balance"></h3><script>
+<input id="nota" placeholder="Nota">
 
-let tipoCambio = Number(localStorage.getItem("tipoCambio")) || 18
+<button onclick="guardar()">Guardar movimiento</button>
+</div>
 
-document.getElementById("tc").innerHTML="Tipo cambio: "+tipoCambio.toFixed(2)
+<div class="panel">
+<h3>Movimientos</h3>
+<table id="tabla"></table>
+<h3 id="balance"></h3>
+</div>
 
-document.getElementById("usd").addEventListener("input",function(){
+<script>
 
-let usd=parseFloat(this.value)
+let tipoCambio=0
 
-if(!usd) return
+async function cargarTipoCambio(){
+let r=await fetch("https://api.exchangerate.host/latest?base=USD&symbols=MXN")
+let d=await r.json()
+tipoCambio=d.rates.MXN
+}
 
+function convertir(){
+let usd=document.getElementById("usd").value
 document.getElementById("mxn").value=(usd*tipoCambio).toFixed(2)
+}
 
-})
-
+// subcategorías
 function cargarSub(){
 
 let c=document.getElementById("categoria").value
@@ -104,177 +133,106 @@ let sub=document.getElementById("sub")
 sub.innerHTML="<option>Subcategoría</option>"
 
 if(c==="trabajo"){
-sub.innerHTML+=`<option>Sueldo</option>`
-sub.innerHTML+=`<option>Salario</option>`
-sub.innerHTML+=`<option>Extras 1</option>`
-sub.innerHTML+=`<option>Extras 2</option>`
-sub.innerHTML+=`<option>Tips MXN</option>`
-sub.innerHTML+=`<option>Tips USD</option>`
-sub.innerHTML+=`<option>Bono</option>`
-sub.innerHTML+=`<option>Comisión</option>`
+sub.innerHTML+=`<option>Sueldo</option>
+<option>Salario</option>
+<option>Extras 1</option>
+<option>Extras 2</option>
+<option>Tips MXN</option>
+<option>Tips USD</option>`
 }
 
 if(c==="servicios"){
-sub.innerHTML+=`<option>Transfer</option>`
-sub.innerHTML+=`<option>Servicio privado</option>`
-sub.innerHTML+=`<option>Extras servicio</option>`
-sub.innerHTML+=`<option>Balance servicio</option>`
+sub.innerHTML+=`<option>Transfer</option>
+<option>Balance servicio</option>`
 }
 
 if(c==="personal"){
-sub.innerHTML+=`<option>Comida</option>`
-sub.innerHTML+=`<option>Supermercado</option>`
-sub.innerHTML+=`<option>Renta</option>`
-sub.innerHTML+=`<option>Luz</option>`
-sub.innerHTML+=`<option>Agua</option>`
-sub.innerHTML+=`<option>Internet</option>`
-sub.innerHTML+=`<option>Teléfono</option>`
-sub.innerHTML+=`<option>Salud</option>`
-sub.innerHTML+=`<option>Farmacia</option>`
-sub.innerHTML+=`<option>Ropa</option>`
-sub.innerHTML+=`<option>Ocio</option>`
-sub.innerHTML+=`<option>Suscripciones</option>`
-sub.innerHTML+=`<option>Otros</option>`
+sub.innerHTML+=`<option>Comida</option>
+<option>Renta</option>
+<option>Luz</option>
+<option>Internet</option>
+<option>Ocio</option>`
 }
 
 if(c==="vehiculo"){
-sub.innerHTML+=`<option>Gasolina</option>`
-sub.innerHTML+=`<option>Mantenimiento</option>`
-sub.innerHTML+=`<option>Refacciones</option>`
-sub.innerHTML+=`<option>Llantas</option>`
-sub.innerHTML+=`<option>Aceite</option>`
-sub.innerHTML+=`<option>Seguro</option>`
-sub.innerHTML+=`<option>Estacionamiento</option>`
-sub.innerHTML+=`<option>Casetas</option>`
-sub.innerHTML+=`<option>Multas</option>`
-sub.innerHTML+=`<option>Lavado</option>`
-sub.innerHTML+=`<option>Otros</option>`
+sub.innerHTML+=`<option>Gasolina</option>
+<option>Mantenimiento</option>
+<option>Casetas</option>`
 }
 
 if(c==="finanzas"){
-sub.innerHTML+=`<option>Ahorro</option>`
-sub.innerHTML+=`<option>Inversión</option>`
-sub.innerHTML+=`<option>Crédito</option>`
-sub.innerHTML+=`<option>Pago tarjeta</option>`
-sub.innerHTML+=`<option>Transferencia</option>`
+sub.innerHTML+=`<option>Ahorro</option>
+<option>Inversión</option>`
 }
 
 }
 
+// guardar
 function guardar(){
 
-let mov={
-fecha:document.getElementById("fecha").value,
-tipo:document.getElementById("tipo").value,
-categoria:document.getElementById("categoria").value,
-sub:document.getElementById("sub").value,
-monto:Number(document.getElementById("monto").value),
-moneda:document.getElementById("moneda").value,
-nota:document.getElementById("nota").value
+let fecha=document.getElementById("fecha").value
+let tipo=document.getElementById("tipo").value
+let categoria=document.getElementById("categoria").value
+let sub=document.getElementById("sub").value
+let monto=Number(document.getElementById("monto").value)
+let moneda=document.getElementById("moneda").value
+let nota=document.getElementById("nota").value
+
+if(!monto) return alert("mete monto")
+
+if(moneda==="USD"){
+monto=monto*tipoCambio
+moneda="MXN"
 }
 
-if(mov.moneda==="USD"){
-mov.monto=mov.monto*tipoCambio
-}
+let lista=JSON.parse(localStorage.getItem("movimientos")||"[]")
 
-let lista=JSON.parse(localStorage.getItem("contabilidad"))||[]
-
-lista.push(mov)
-
-localStorage.setItem("contabilidad",JSON.stringify(lista))
-
-location.reload()
-
-}
-
-function borrar(i){
-
-let lista=JSON.parse(localStorage.getItem("contabilidad"))
-
-lista.splice(i,1)
-
-localStorage.setItem("contabilidad",JSON.stringify(lista))
-
-location.reload()
-
-}
-
-function editar(i){
-
-let lista=JSON.parse(localStorage.getItem("contabilidad"))
-
-let nuevo=prompt("Nuevo monto:",lista[i].monto)
-
-if(nuevo){
-
-lista[i].monto=Number(nuevo)
-
-localStorage.setItem("contabilidad",JSON.stringify(lista))
-
-location.reload()
-
-}
-
-}
-
-function cargar(){
-
-let tabla=document.getElementById("tabla")
-
-let lista=JSON.parse(localStorage.getItem("contabilidad"))||[]
-
-let ingresos=0
-let gastos=0
-
-lista.forEach((m,i)=>{
-
-tabla.innerHTML+=`
-<tr>
-<td>${m.fecha}</td>
-<td>${m.tipo}</td>
-<td>${m.sub}</td>
-<td>$${m.monto.toFixed(2)}</td>
-<td>
-<span class="icon" onclick="editar(${i})">✏</span>
-<span class="icon" onclick="borrar(${i})">🗑</span>
-</td>
-</tr>
-`
-
-if(m.tipo==="Ingreso"){
-ingresos+=m.monto
-}else{
-gastos+=m.monto
-}
-
+lista.push({
+fecha,
+tipo,
+categoria,
+sub,
+monto,
+moneda,
+nota
 })
 
-let balance=ingresos-gastos
+localStorage.setItem("movimientos",JSON.stringify(lista))
 
-document.getElementById("balance").innerHTML=
-"Ingresos: $"+ingresos.toFixed(2)+
-" | Gastos: $"+gastos.toFixed(2)+
-" | Balance: $"+balance.toFixed(2)
-
+location.reload()
 }
 
+// cargar tabla
 function cargarMovimientos(){
 
 let tabla=document.getElementById("tabla")
 
+tabla.innerHTML=`
+<tr>
+<th>Fecha</th>
+<th>Tipo</th>
+<th>Categoría</th>
+<th>Monto</th>
+<th></th>
+</tr>
+`
+
 let lista=JSON.parse(localStorage.getItem("movimientos")||"[]")
 
+let total=0
+
 lista.forEach((m,i)=>{
+
+if(m.tipo==="Ingreso") total+=Number(m.monto)
+if(m.tipo==="Gasto") total-=Number(m.monto)
 
 let fila=`
 <tr>
 <td>${m.fecha}</td>
 <td>${m.tipo}</td>
 <td>${m.categoria} - ${m.sub}</td>
-<td>${m.monto} ${m.moneda}</td>
-<td>
-<button onclick="borrar(${i})">❌</button>
-</td>
+<td>${m.monto.toFixed(2)} MXN</td>
+<td><button onclick="borrar(${i})">❌</button></td>
 </tr>
 `
 
@@ -282,9 +240,11 @@ tabla.innerHTML+=fila
 
 })
 
+document.getElementById("balance").innerHTML="Balance: $"+total.toFixed(2)
+
 }
 
-cargarMovimientos()
+// borrar
 function borrar(i){
 
 let lista=JSON.parse(localStorage.getItem("movimientos")||"[]")
@@ -296,5 +256,11 @@ localStorage.setItem("movimientos",JSON.stringify(lista))
 location.reload()
 
 }
-</script></body>
+
+cargarTipoCambio()
+cargarMovimientos()
+
+</script>
+
+</body>
 </html>
