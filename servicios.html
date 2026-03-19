@@ -186,7 +186,27 @@ lista[index][campo]=nuevo
 }
 
 localStorage.setItem("servicios-"+hoy,JSON.stringify(lista))
+let movimientos=JSON.parse(localStorage.getItem("movimientos")||"[]")
 
+lista.forEach(s=>{
+
+if(s.balance && Number(s.balance)>0){
+
+movimientos.push({
+fecha:s.fecha,
+tipo:"Ingreso",
+categoria:"servicios",
+sub:"Balance servicio",
+monto:Number(s.balance),
+moneda:"MXN",
+nota:s.cliente+" "+s.origen+" → "+s.destino
+})
+
+}
+
+})
+
+localStorage.setItem("movimientos",JSON.stringify(movimientos))
 // actualizar agenda
 actualizarAgenda()
 
