@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{background:black;color:#d4af37;text-align:center}
+.panel{background:#111;margin:15px;padding:20px;border-radius:15px;box-shadow:0 0 10px #d4af37}
+table{width:100%;color:#d4af37}
+button{background:#d4af37;color:black;border:none;padding:10px;border-radius:10px}
+</style>
+</head>
+
+<body>
+
+<img src="logo.png" class="logo">
+
+<button onclick="location.href='index.html'">🏠 Inicio</button>
+
+<h2>Contabilidad</h2>
+
+<div class="panel">
+
+<h3>Nuevo movimiento</h3>
+
+<select id="tipo">
+<option>Ingreso</option>
+<option>Gasto</option>
+</select>
+
+<select id="categoria">
+<option>Servicios</option>
+<option>Sueldo</option>
+<option>Tips</option>
+<option>Extras</option>
+<option>Comida</option>
+<option>Gasolina</option>
+<option>Ocio</option>
+</select>
+
+<input id="monto" placeholder="Monto">
+
+<button onclick="guardar()">Guardar</button>
+
+</div>
+
+<div class="panel">
+<h3>Movimientos</h3>
+<table id="tabla"></table>
+<h3 id="balance"></h3>
+</div>
+
+<script>
+
+function guardar(){
+
+let tipo=document.getElementById("tipo").value
+let categoria=document.getElementById("categoria").value
+let monto=document.getElementById("monto").value
+
+let mov={
+fecha:new Date().toISOString().split("T")[0],
+tipo,
+categoria,
+monto:Number(monto)
+}
+
+let lista=JSON.parse(localStorage.getItem("conta")||[])
+lista.push(mov)
+
+localStorage.setItem("conta",JSON.stringify(lista))
+
+location.reload()
+
+}
+
+function cargar(){
+
+let lista=JSON.parse(localStorage.getItem("conta")||[])
+let tabla=document.getElementById("tabla")
+
+let total=0
+
+lista.forEach(m=>{
+
+let tr=document.createElement("tr")
+
+tr.innerHTML=`
+<td>${m.fecha}</td>
+<td>${m.tipo}</td>
+<td>${m.categoria}</td>
+<td>$${m.monto}</td>
+`
+
+tabla.appendChild(tr)
+
+if(m.tipo=="Ingreso") total+=m.monto
+else total-=m.monto
+
+})
+
+document.getElementById("balance").innerText="Balance: $"+total
+
+}
+
+cargar()
+
+</script>
+
+</body>
+</html>
