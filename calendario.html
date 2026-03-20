@@ -3,164 +3,51 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{
-background:black;
-color:#d4af37;
-font-family:sans-serif;
-text-align:center;
-}
-
-.logo{
-width:120px;
-margin:20px auto;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(7,1fr);
-gap:5px;
-margin:10px;
-}
-
-.dia{
-padding:10px;
-background:#111;
-border-radius:8px;
-}
-
-.activo{
-background:#d4af37;
-color:black;
-}
-
-.panel{
-background:#111;
-margin:15px;
-padding:20px;
-border-radius:15px;
-box-shadow:0 0 10px #d4af37;
-}
-
-button{
-width:90%;
-padding:15px;
-margin:10px;
-background:#d4af37;
-color:black;
-border:none;
-border-radius:10px;
-font-weight:bold;
-}
-
-input{
-width:90%;
-padding:10px;
-margin:5px;
-border-radius:8px;
-border:none;
-}
+body{background:black;color:#d4af37;text-align:center;font-family:sans-serif}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;padding:10px}
+.dia{background:#111;padding:15px;border-radius:10px;cursor:pointer}
 </style>
 </head>
 
 <body>
 
-<img src="IMG-20260220-WA0056.jpg" class="logo">
-
-<button onclick="location.href='index.html'">🏠 Inicio</button>
-
 <h2 id="mes"></h2>
 
 <div class="grid" id="cal"></div>
 
-<div class="panel">
-
-<h3 id="fecha"></h3>
-
-<input id="nota" placeholder="Nota del día">
-<button onclick="guardarNota()">Guardar nota</button>
-
-<div id="servicios"></div>
-
-</div>
-
 <script>
 
-// fecha base
-let hoy=new Date()
-let año=hoy.getFullYear()
-let mes=hoy.getMonth()
+let fecha=new Date()
+let mes=fecha.getMonth()
+let anio=fecha.getFullYear()
 
-let fechaSeleccionada=localStorage.getItem("fechaSeleccionada") 
-|| new Date().toISOString().split("T")[0]
+let nombresMes=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
 
-// titulo
-document.getElementById("mes").innerText=
-new Date(año,mes).toLocaleDateString("es-MX",{month:"long",year:"numeric"})
+document.getElementById("mes").innerText=nombresMes[mes]+" "+anio
 
-// calendario
-let dias=new Date(año,mes+1,0).getDate()
+let dias=new Date(anio,mes+1,0).getDate()
+
 let cont=document.getElementById("cal")
 
 for(let i=1;i<=dias;i++){
 
-let fecha=`${año}-${String(mes+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`
+let d=document.createElement("div")
+d.className="dia"
+d.innerText=i
 
-let servicios=JSON.parse(localStorage.getItem("servicios-"+fecha)||"[]")
+d.onclick=function(){
 
-let div=document.createElement("div")
-div.className="dia"
+let fechaSel=anio+"-"+String(mes+1).padStart(2,"0")+"-"+String(i).padStart(2,"0")
 
-// indicador
-if(servicios.length>0){
-div.innerText=i+" 🔵"
-}else{
-div.innerText=i
-}
-
-if(fecha==fechaSeleccionada){
-div.classList.add("activo")
-}
-
-div.onclick=function(){
-alert("si jala el click")
-}
-
-let fecha=anio+"-"+String(mes+1).padStart(2,"0")+"-"+String(dia).padStart(2,"0")
-
-localStorage.setItem("fechaSeleccionada",fecha)
+localStorage.setItem("fechaSeleccionada",fechaSel)
 
 location.href="agenda-dia.html"
 
 }
-// mostrar info del día
-document.getElementById("fecha").innerText=fechaSeleccionada
 
-// nota
-let nota=localStorage.getItem("nota-"+fechaSeleccionada)||""
-document.getElementById("nota").value=nota
+cont.appendChild(d)
 
-function guardarNota(){
-let texto=document.getElementById("nota").value
-localStorage.setItem("nota-"+fechaSeleccionada,texto)
-alert("Guardado")
 }
-
-// servicios del día
-let lista=JSON.parse(localStorage.getItem("servicios-"+fechaSeleccionada)||"[]")
-
-let contServ=document.getElementById("servicios")
-
-lista.forEach(s=>{
-
-let div=document.createElement("div")
-
-div.innerHTML=`
-<p>${s.hora} - ${s.cliente}</p>
-`
-
-contServ.appendChild(div)
-
-})
 
 </script>
 
