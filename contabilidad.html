@@ -78,6 +78,8 @@ function cargar(){
 let lista=JSON.parse(localStorage.getItem("conta")||[])
 let tabla=document.getElementById("tabla")
 
+tabla.innerHTML=""
+
 let total=0
 
 lista.forEach(m=>{
@@ -101,6 +103,10 @@ else total-=m.monto
 document.getElementById("balance").innerText="Balance: $"+total
 
 }
+
+cargar()
+
+</script>
 
 cargar()
 
