@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{background:black;color:#d4af37;text-align:center;font-family:sans-serif}
+.logo{width:100px;margin:10px auto;display:block}
+.panel{background:#111;margin:10px;padding:15px;border-radius:15px}
+button{width:90%;padding:10px;margin:5px;background:#d4af37;color:black;border:none;border-radius:10px}
+input,textarea{width:90%;padding:10px;margin:5px;border-radius:10px;border:none}
+</style>
+</head>
+
+<body>
+
+<img src="./IMG-20260220-WA0056.jpg" class="logo">
+
+<h2 id="fecha"></h2>
+
+<div class="panel">
+<h3>📝 Notas</h3>
+<textarea id="nota"></textarea>
+<button onclick="guardarNota()">Guardar nota</button>
+</div>
+
+<div class="panel">
+<h3>✅ Tareas</h3>
+
+<input id="tarea" placeholder="Nueva tarea">
+<button onclick="agregarTarea()">Agregar</button>
+
+<div id="lista"></div>
+</div>
+
+<button onclick="location.href='agenda.html'">⬅ Volver</button>
+
+<script>
+
+let fecha=localStorage.getItem("fechaSeleccionada")
+
+document.getElementById("fecha").innerText=fecha
+
+// 🔥 NOTA
+function guardarNota(){
+let nota=document.getElementById("nota").value
+localStorage.setItem("nota-"+fecha,nota)
+alert("Guardado")
+}
+
+// cargar nota
+document.getElementById("nota").value=
+localStorage.getItem("nota-"+fecha)||""
+
+// 🔥 TAREAS
+function agregarTarea(){
+
+let t=document.getElementById("tarea").value
+
+let lista=JSON.parse(localStorage.getItem("tareas-"+fecha)||"[]")
+
+lista.push(t)
+
+localStorage.setItem("tareas-"+fecha,JSON.stringify(lista))
+
+location.reload()
+}
+
+// mostrar tareas
+let lista=JSON.parse(localStorage.getItem("tareas-"+fecha)||"[]")
+
+let cont=document.getElementById("lista")
+
+lista.forEach((t,i)=>{
+
+let d=document.createElement("div")
+
+d.innerHTML=`
+<p>${t}</p>
+<button onclick="borrar(${i})">❌</button>
+`
+
+cont.appendChild(d)
+
+})
+
+function borrar(i){
+
+let lista=JSON.parse(localStorage.getItem("tareas-"+fecha)||"[]")
+
+lista.splice(i,1)
+
+localStorage.setItem("tareas-"+fecha,JSON.stringify(lista))
+
+location.reload()
+
+}
+
+</script>
+
+</body>
+</html>
