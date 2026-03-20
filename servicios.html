@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{background:black;color:#d4af37;text-align:center}
+.panel{background:#111;margin:15px;padding:20px;border-radius:15px;box-shadow:0 0 10px #d4af37}
+input,select{width:90%;padding:10px;margin:5px;border-radius:8px;border:none}
+button{width:90%;padding:15px;margin:10px;background:#d4af37;color:black;border:none;border-radius:10px;font-weight:bold}
+</style>
+</head>
+
+<body>
+
+<img src="logo.png" class="logo">
+
+<button onclick="location.href='index.html'">🏠 Inicio</button>
+
+<h2>Servicios</h2>
+
+<div class="panel">
+
+<input id="fecha" type="date">
+<input id="hora" type="time">
+
+<select id="tipo">
+<option>Transfer</option>
+<option>Salida</option>
+<option>Llegada</option>
+</select>
+
+<input id="cliente" placeholder="Cliente">
+<input id="origen" placeholder="Origen">
+<input id="destino" placeholder="Destino">
+<input id="pax" placeholder="Pax">
+<input id="balance" placeholder="Balance">
+
+<select id="estado">
+<option>Pendiente</option>
+<option>Completado</option>
+<option>Cancelado</option>
+<option>No show</option>
+</select>
+
+<button onclick="guardar()">Guardar</button>
+
+</div>
+
+<script>
+
+function guardar(){
+
+let fecha=fechaInput.value
+let hora=horaInput.value
+let tipo=tipoInput.value
+let cliente=clienteInput.value
+let origen=origenInput.value
+let destino=destinoInput.value
+let pax=paxInput.value
+let balance=balanceInput.value
+let estado=estadoInput.value
+
+let servicio={fecha,hora,tipo,cliente,origen,destino,pax,balance,estado}
+
+let key="servicios-"+fecha
+let lista=JSON.parse(localStorage.getItem(key)||[])
+
+lista.push(servicio)
+
+localStorage.setItem(key,JSON.stringify(lista))
+
+// SOLO si está completado
+if(estado=="Completado"){
+
+let mov={
+fecha:fecha,
+tipo:"Ingreso",
+categoria:"Servicios",
+monto:Number(balance)
+}
+
+let conta=JSON.parse(localStorage.getItem("conta")||[])
+conta.push(mov)
+localStorage.setItem("conta",JSON.stringify(conta))
+
+}
+
+alert("Guardado")
+location.reload()
+
+}
+
+</script>
+
+</body>
+</html>
