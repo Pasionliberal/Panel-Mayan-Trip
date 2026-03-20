@@ -122,14 +122,14 @@ div.classList.add("activo")
 }
 
 div.onclick=function(){
-localStorage.setItem("fechaSeleccionada",fecha)
-location.href="agenda.html"
-  }
 
-cont.appendChild(div)
+let fecha=anio+"-"+String(mes+1).padStart(2,"0")+"-"+String(dia).padStart(2,"0")
+
+localStorage.setItem("fechaSeleccionada",fecha)
+
+location.href="agenda-dia.html"
 
 }
-
 // mostrar info del día
 document.getElementById("fecha").innerText=fechaSeleccionada
 
