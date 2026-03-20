@@ -96,12 +96,32 @@ for(let i=1;i<=dias;i++){
 
 let fecha=`${año}-${String(mes+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`
 
+// 🔥 revisar si hay servicios
+let servicios=JSON.parse(localStorage.getItem("servicios-"+fecha) || "[]")
+
 let div=document.createElement("div")
 div.className="dia"
-div.innerText=i
 
+// 👉 mostrar número + indicador
+if(servicios.length>0){
+div.innerText=i+" 🔵"
+}else{
+div.innerText=i
+}
+
+// marcar seleccionado
 if(fecha===fechaSeleccionada){
 div.classList.add("activo")
+}
+
+// click
+div.onclick=function(){
+localStorage.setItem("fechaSeleccionada",fecha)
+location.reload()
+}
+
+contenedor.appendChild(div)
+
 }
 
 div.onclick=function(){
