@@ -3,64 +3,30 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{
-background:black;
-color:#d4af37;
-font-family:sans-serif;
-text-align:center;
-}
-
-.logo{
-width:120px;
-margin:20px auto;
-}
-
-.panel{
-background:#111;
-margin:15px;
-padding:20px;
-border-radius:15px;
-box-shadow:0 0 10px #d4af37;
-}
-
-button{
-width:90%;
-padding:15px;
-margin:10px;
-border:none;
-border-radius:10px;
-background:#d4af37;
-color:black;
-font-size:16px;
-font-weight:bold;
-}
-
-input{
-width:90%;
-padding:10px;
-margin:5px;
-border-radius:8px;
-border:none;
-}
+body{background:black;color:#d4af37;text-align:center;font-family:sans-serif}
+.logo{width:120px;margin:20px auto;display:block}
+.panel{background:#111;margin:15px;padding:20px;border-radius:15px;box-shadow:0 0 10px #d4af37}
+button{width:90%;padding:15px;margin:10px;background:#d4af37;color:black;border:none;border-radius:10px}
+input{width:90%;padding:10px;margin:5px;border-radius:8px;border:none}
 </style>
 </head>
 
 <body>
 
-<img src="IMG-20260220-WA0056.jpg" class="logo">
+<img src="./IMG-20260220-WA0056.jpg" class="logo">
 
 <h2 id="fecha"></h2>
 
 <div class="panel">
 <h3>Servicios de hoy</h3>
-<p id="servicios">0</p>
-<p id="balance">$0</p>
+<p id="servicios"></p>
+<p id="balance"></p>
 </div>
 
 <div class="panel">
 <h3>USD → MXN</h3>
 <input id="usd" placeholder="USD" oninput="convertir()">
-<input id="mxn" placeholder="MXN" readonly>
+<input id="mxn" placeholder="MXN">
 </div>
 
 <button onclick="location.href='agenda.html'">📅 Calendario</button>
@@ -80,13 +46,14 @@ let total=0
 lista.forEach(s=> total+=Number(s.balance||0))
 document.getElementById("balance").innerText="$"+total
 
-// conversor
 let tipoCambio=0
 
 async function cargarTC(){
 let r=await fetch("https://api.exchangerate.host/latest?base=USD&symbols=MXN")
 let d=await r.json()
 tipoCambio=d.rates.MXN
+
+document.getElementById("mxn").placeholder="MXN ($"+tipoCambio.toFixed(2)+")"
 }
 
 function convertir(){
