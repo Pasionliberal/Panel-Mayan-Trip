@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{
+background:black;
+color:#d4af37;
+font-family:sans-serif;
+text-align:center;
+}
+
+.logo{
+width:120px;
+margin:20px auto;
+}
+
+.panel{
+background:#111;
+margin:15px;
+padding:20px;
+border-radius:15px;
+box-shadow:0 0 10px #d4af37;
+}
+
+button{
+width:90%;
+padding:15px;
+margin:10px;
+border:none;
+border-radius:10px;
+background:#d4af37;
+color:black;
+font-size:16px;
+font-weight:bold;
+}
+
+input{
+width:90%;
+padding:10px;
+margin:5px;
+border-radius:8px;
+border:none;
+}
+</style>
+</head>
+
+<body>
+
+<img src="logo.png" class="logo">
+
+<h2 id="fecha"></h2>
+
+<div class="panel">
+<h3>Servicios de hoy</h3>
+<p id="servicios">0</p>
+<p id="balance">$0</p>
+</div>
+
+<div class="panel">
+<h3>USD → MXN</h3>
+<input id="usd" placeholder="USD" oninput="convertir()">
+<input id="mxn" placeholder="MXN" readonly>
+</div>
+
+<button onclick="location.href='agenda.html'">📅 Calendario</button>
+<button onclick="location.href='servicios.html'">🚐 Servicios</button>
+<button onclick="location.href='contabilidad.html'">💰 Contabilidad</button>
+
+<script>
+
+let hoy=new Date().toISOString().split("T")[0]
+document.getElementById("fecha").innerText=hoy
+
+let lista=JSON.parse(localStorage.getItem("servicios-"+hoy)||"[]")
+
+document.getElementById("servicios").innerText=lista.length+" servicios"
+
+let total=0
+lista.forEach(s=> total+=Number(s.balance||0))
+document.getElementById("balance").innerText="$"+total
+
+// conversor
+let tipoCambio=0
+
+async function cargarTC(){
+let r=await fetch("https://api.exchangerate.host/latest?base=USD&symbols=MXN")
+let d=await r.json()
+tipoCambio=d.rates.MXN
+}
+
+function convertir(){
+let usd=document.getElementById("usd").value
+document.getElementById("mxn").value=(usd*tipoCambio).toFixed(2)
+}
+
+cargarTC()
+
+</script>
+
+</body>
+</html>
