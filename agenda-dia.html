@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
+
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -9,6 +9,7 @@ body{
 background:black;
 color:#d4af37;
 text-align:center;
+font-family:sans-serif;
 }
 
 .logo{
@@ -20,8 +21,8 @@ display:block;
 .panel{
 background:#111;
 margin:10px;
-padding:10px;
-border-radius:10px;
+padding:15px;
+border-radius:15px;
 }
 
 input,textarea{
@@ -48,6 +49,7 @@ border-radius:10px;
 <body>
 
 <img src="./IMG-20260220-WA0056.jpg" class="logo">
+
 <h2 id="fecha"></h2>
 
 <div class="panel">
@@ -65,7 +67,7 @@ border-radius:10px;
 <div id="lista"></div>
 </div>
 
-<button onclick="location.href='agenda.html'">⬅ Volver</button>
+<button onclick="location.href='calendario.html'">⬅ Volver</button>
 
 <script>
 
@@ -77,71 +79,5 @@ fechaSeleccionada=new Date().toISOString().split("T")[0]
 
 document.getElementById("fecha").innerText=fechaSeleccionada
 
-// 🔥 NOTA
-document.getElementById("nota").value=
-localStorage.getItem("nota-"+fechaSeleccionada)||""
-
-function guardarNota(){
-localStorage.setItem("nota-"+fechaSeleccionada,document.getElementById("nota").value)
-alert("Guardado")
-}
-
-// 🔥 TAREAS
-function cargar(){
-
-let lista=JSON.parse(localStorage.getItem("tareas-"+fechaSeleccionada)||"[]")
-
-let cont=document.getElementById("lista")
-cont.innerHTML=""
-
-lista.forEach((t,i)=>{
-
-let d=document.createElement("div")
-
-d.innerHTML=`
-<p>${t}</p>
-<button onclick="borrar(${i})">❌</button>
-`
-
-cont.appendChild(d)
-
-})
-
-}
-
-function agregar(){
-
-let t=document.getElementById("nueva").value
-
-if(!t) return
-
-let lista=JSON.parse(localStorage.getItem("tareas-"+fechaSeleccionada)||"[]")
-
-lista.push(t)
-
-localStorage.setItem("tareas-"+fechaSeleccionada,JSON.stringify(lista))
-
-document.getElementById("nueva").value=""
-
-cargar()
-
-}
-
-function borrar(i){
-
-let lista=JSON.parse(localStorage.getItem("tareas-"+fechaSeleccionada)||"[]")
-
-lista.splice(i,1)
-
-localStorage.setItem("tareas-"+fechaSeleccionada,JSON.stringify(lista))
-
-cargar()
-
-}
-
-cargar()
-
-</script>
-
-</body>
-</html>
+// NOTA
+document.getElementById("
