@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+background:black;
+color:#d4af37;
+text-align:center;
+font-family:sans-serif;
+}
+
+.logo{
+width:100px;
+margin:10px auto;
+display:block;
+}
+
+.panel{
+background:#111;
+margin:10px;
+padding:10px;
+border-radius:10px;
+}
+
+input,textarea,select{
+width:90%;
+margin:5px;
+padding:10px;
+border-radius:10px;
+border:none;
+}
+
+button{
+width:90%;
+padding:10px;
+margin:5px;
+background:#d4af37;
+color:black;
+border:none;
+border-radius:10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<img src="./IMG-20260220-WA0056.jpg" class="logo">
+
+<h2 id="mes"></h2>
+
+<div id="cal" style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px;padding:10px;"></div>
+
+<script>
+
+let hoy=new Date()
+let mes=hoy.getMonth()
+let anio=hoy.getFullYear()
+
+let nombres=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
+
+document.getElementById("mes").innerText=nombres[mes]+" "+anio
+
+let dias=new Date(anio,mes+1,0).getDate()
+
+let cont=document.getElementById("cal")
+
+for(let i=1;i<=dias;i++){
+
+let div=document.createElement("div")
+div.style.background="#111"
+div.style.padding="15px"
+div.style.borderRadius="10px"
+div.innerText=i
+
+div.onclick=function(){
+
+let fecha=anio+"-"+String(mes+1).padStart(2,"0")+"-"+String(i).padStart(2,"0")
+
+localStorage.setItem("fechaSeleccionada",fecha)
+
+location.href="agenda-dia.html"
+
+}
+
+cont.appendChild(div)
+
+}
+
+</script>
+
+</body>
+
+</html>
