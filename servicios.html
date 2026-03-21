@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+background:black;
+color:#d4af37;
+font-family:sans-serif;
+text-align:center;
+}
+
+.logo{
+width:100px;
+margin:10px auto;
+display:block;
+}
+
+.panel{
+background:#111;
+margin:10px;
+padding:15px;
+border-radius:15px;
+box-shadow:0 0 10px #d4af37;
+}
+
+input,select{
+width:90%;
+padding:10px;
+margin:5px;
+border-radius:10px;
+border:none;
+}
+
+button{
+width:90%;
+padding:12px;
+margin:10px;
+background:#d4af37;
+color:black;
+border:none;
+border-radius:10px;
+font-weight:bold;
+}
+
+.item{
+background:#222;
+margin:10px;
+padding:10px;
+border-radius:10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<img src="./IMG-20260220-WA0056.jpg" class="logo">
+
+<h2>Servicios</h2>
+
+<div class="panel">
+
+<input type="date" id="fecha">
+<input type="time" id="hora">
+
+<select id="tipo">
+<option>Transfer</option>
+<option>Salida</option>
+<option>Llegada</option>
+</select>
+
+<input id="cliente" placeholder="Cliente">
+<input id="origen" placeholder="Origen">
+<input id="destino" placeholder="Destino">
+<input id="pax" placeholder="Pax">
+<input id="balance" placeholder="Balance">
+
+<select id="estado">
+<option>Pendiente</option>
+<option>Completado</option>
+<option>Cancelado</option>
+<option>No show</option>
+</select>
+
+<button onclick="guardar()">Guardar</button>
+
+</div>
+
+<div class="panel">
+<h3 id="total">Servicios: 0</h3>
+<div id="lista"></div>
+</div>
+
+<script>
+
+// 🔥 FECHA BASE
+let fechaSeleccionada = localStorage.getItem("fechaSeleccionada") 
+|| new Date().toISOString().split("T")[0]
+
+// poner fecha automática
+document.getElementById("fecha").value = fechaSeleccionada
+
+// 🔥 GUARDAR
+function guardar(){
+
+let fecha=document.getElementById("fecha").value
+let hora=document.getElementById("hora").value
+let tipo=document.getElementById("tipo").value
+let cliente=document.getElementById("cliente").value
+let origen=document.getElementById("origen").value
+let destino=document.getElementById("destino").value
+let pax=document.getElementById("pax").value
+let balance=document.getElementById("balance").value
+let estado=document.getElementById("estado").value
+
+if(!fecha || !hora){
+alert("Falta fecha u hora")
+return
+}
+
+let servicio={
+fecha,
+hora,
+tipo,
+cliente,
+origen,
+destino,
+pax,
+balance,
+estado
+}
+
+let key="servicios-"+fecha
+
+let lista=JSON.parse(localStorage.getItem(key) || "[]")
+
+lista.push(servicio)
+
+localStorage.setItem(key, JSON.stringify(lista))
+
+// 🔥 SOLO si está completado → contabilidad
+if(estado==="Completado"){
+
+let conta=JSON.parse(localStorage.getItem("conta") || "[]")
+
+conta.push({
+fecha:fecha,
+tipo:"Ingreso",
+categoria:"Servicios",
+monto:Number(balance || 0)
+})
+
+localStorage.setItem("conta", JSON.stringify(conta))
+
+}
+
+alert("Guardado correctamente ✅")
+
+location.reload()
+
+}
+
+// 🔥 CARGAR SERVICIOS
+function cargar(){
+
+let key="servicios-"+fechaSeleccionada
+
+let lista=JSON.parse(localStorage.getItem(key) || "[]")
+
+let cont=document.getElementById("lista")
+cont.innerHTML=""
+
+// contador
+document.getElementById("total").innerText="Servicios: "+lista.length
+
+lista.forEach((s,i)=>{
+
+let div=document.createElement("div")
+div.className="item"
+
+div.innerHTML=`
+<b>${s.hora}</b> - ${s.cliente}<br>
+${s.origen} → ${s.destino}<br>
+Pax: ${s.pax} | $${s.balance}<br>
+Estado: ${s.estado}<br>
+<button onclick="borrar(${i})">❌ Eliminar</button>
+`
+
+cont.appendChild(div)
+
+})
+
+}
+
+// 🔥 BORRAR
+function borrar(i){
+
+let key="servicios-"+fechaSeleccionada
+
+let lista=JSON.parse(localStorage.getItem(key) || "[]")
+
+lista.splice(i,1)
+
+localStorage.setItem(key, JSON.stringify(lista))
+
+location.reload()
+
+}
+
+cargar()
+
+</script>
+
+</body>
+</html>
