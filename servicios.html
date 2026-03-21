@@ -36,7 +36,7 @@ border:none;
 button{
 width:90%;
 padding:12px;
-margin:10px;
+margin:8px;
 background:#d4af37;
 color:black;
 border:none;
@@ -95,6 +95,9 @@ border-radius:10px;
 
 <script>
 
+// 🔥 CONTROL EDITAR
+let editando = -1
+
 // 🔥 FECHA BASE
 let fechaSeleccionada = localStorage.getItem("fechaSeleccionada") 
 || new Date().toISOString().split("T")[0]
@@ -133,28 +136,17 @@ estado
 }
 
 let key="servicios-"+fecha
-
 let lista=JSON.parse(localStorage.getItem(key) || "[]")
 
+// 🔥 EDITAR O CREAR
+if(editando >= 0){
+lista[editando] = servicio
+editando = -1
+}else{
 lista.push(servicio)
+}
 
 localStorage.setItem(key, JSON.stringify(lista))
-
-// 🔥 SOLO si está completado → contabilidad
-if(estado==="Completado"){
-
-let conta=JSON.parse(localStorage.getItem("conta") || "[]")
-
-conta.push({
-fecha:fecha,
-tipo:"Ingreso",
-categoria:"Servicios",
-monto:Number(balance || 0)
-})
-
-localStorage.setItem("conta", JSON.stringify(conta))
-
-}
 
 alert("Guardado correctamente ✅")
 
@@ -162,7 +154,7 @@ location.reload()
 
 }
 
-// 🔥 CARGAR SERVICIOS
+// 🔥 CARGAR
 function cargar(){
 
 let key="servicios-"+fechaSeleccionada
@@ -185,6 +177,8 @@ div.innerHTML=`
 ${s.origen} → ${s.destino}<br>
 Pax: ${s.pax} | $${s.balance}<br>
 Estado: ${s.estado}<br>
+
+<button onclick="editar(${i})">✏️ Editar</button>
 <button onclick="borrar(${i})">❌ Eliminar</button>
 `
 
@@ -194,11 +188,34 @@ cont.appendChild(div)
 
 }
 
+// 🔥 EDITAR
+function editar(i){
+
+let key="servicios-"+fechaSeleccionada
+let lista=JSON.parse(localStorage.getItem(key) || "[]")
+
+let s=lista[i]
+
+document.getElementById("fecha").value=s.fecha
+document.getElementById("hora").value=s.hora
+document.getElementById("tipo").value=s.tipo
+document.getElementById("cliente").value=s.cliente
+document.getElementById("origen").value=s.origen
+document.getElementById("destino").value=s.destino
+document.getElementById("pax").value=s.pax
+document.getElementById("balance").value=s.balance
+document.getElementById("estado").value=s.estado
+
+editando = i
+
+window.scrollTo(0,0)
+
+}
+
 // 🔥 BORRAR
 function borrar(i){
 
 let key="servicios-"+fechaSeleccionada
-
 let lista=JSON.parse(localStorage.getItem(key) || "[]")
 
 lista.splice(i,1)
