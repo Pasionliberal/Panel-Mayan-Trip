@@ -18,6 +18,15 @@ margin:10px auto;
 display:block;
 }
 
+.bloque{
+background:#111;
+margin:5px;
+padding:10px;
+border-radius:10px;
+border:1px solid #d4af37;
+background:red;
+}
+
 .panel{
 background:#111;
 margin:10px;
@@ -66,9 +75,55 @@ border-radius:10px;
 
 <div id="lista"></div>
 </div>
-
+<div class="panel">
+<h3>🕒 Agenda del día</h3>
+<div id="agenda"></div>
+</div>
 <button onclick="location.href='calendario.html'">⬅ Volver</button>
 
+function generarAgenda(){
+
+let cont=document.getElementById("agenda")
+cont.innerHTML=""
+
+let lista=JSON.parse(localStorage.getItem("agenda-"+fechaSeleccionada)||"{}")
+
+for(let h=0;h<24;h++){
+
+for(let m=0;m<60;m+=30){
+
+let hora=String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")
+
+let div=document.createElement("div")
+div.className="bloque"
+
+let valor=lista[hora]||""
+
+div.innerHTML=`
+<b>${hora}</b><br>
+<input value="${valor}" onchange="guardarHora('${hora}',this.value)">
+`
+
+cont.appendChild(div)
+
+}
+
+}
+
+}
+
+function guardarHora(hora,valor){
+
+let lista=JSON.parse(localStorage.getItem("agenda-"+fechaSeleccionada)||"{}")
+
+lista[hora]=valor
+
+localStorage.setItem("agenda-"+fechaSeleccionada,JSON.stringify(lista))
+
+}
+
+// 👇 ESTA LÍNEA ES CLAVE
+generarAgenda()
 <script>
 
 let fechaSeleccionada=localStorage.getItem("fechaSeleccionada")
